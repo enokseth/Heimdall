@@ -146,10 +146,10 @@ namespace HeimdallFrontend
 			void OpenDonationWebpage(void);
 			void SetVerboseOutput(bool enabled);
 			void ShowAbout(void);
-			void ChangeTheme(int themeIndex);
-
-			void FunctionTabChanged(int index);
-
+		void FollowSystemTheme(void);
+		void LightTheme(void);
+		void DarkTheme(void);
+		void FunctionTabChanged(int index);
 			// Load Package Tab
 			void SelectFirmwarePackage(void);
 			void OpenDeveloperHomepage(void);

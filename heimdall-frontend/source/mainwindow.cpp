@@ -502,8 +502,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 	QObject::connect(adbInstallButton, SIGNAL(clicked()), this, SLOT(InstallApk()));
 	QObject::connect(clearAdbOutputButton, SIGNAL(clicked()), this, SLOT(ClearAdbOutput()));
 
-	// Theme System
-	QObject::connect(themeSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeTheme(int)));
+	// Theme System - Connect menu actions
+	QObject::connect(actionFollowSystem, SIGNAL(triggered()), this, SLOT(FollowSystemTheme()));
+	QObject::connect(actionLightTheme, SIGNAL(triggered()), this, SLOT(LightTheme()));
+	QObject::connect(actionDarkTheme, SIGNAL(triggered()), this, SLOT(DarkTheme()));
 
 	// Heimdall Command Line
 	QObject::connect(&heimdallProcess, SIGNAL(readyRead()), this, SLOT(HandleHeimdallStdout()));
@@ -1645,10 +1647,37 @@ void MainWindow::HandleAdbError(QProcess::ProcessError error)
 
 // Theme System Implementation
 
-void MainWindow::ChangeTheme(int themeIndex)
+void MainWindow::FollowSystemTheme(void)
 {
-	currentTheme = themeIndex;
-	ApplyTheme(themeIndex);
+	// Uncheck other theme actions
+	actionLightTheme->setChecked(false);
+	actionDarkTheme->setChecked(false);
+	actionFollowSystem->setChecked(true);
+	
+	currentTheme = 0;
+	DetectSystemTheme();
+}
+
+void MainWindow::LightTheme(void)
+{
+	// Uncheck other theme actions
+	actionFollowSystem->setChecked(false);
+	actionDarkTheme->setChecked(false);
+	actionLightTheme->setChecked(true);
+	
+	currentTheme = 1;
+	ApplyTheme(1);
+}
+
+void MainWindow::DarkTheme(void)
+{
+	// Uncheck other theme actions
+	actionFollowSystem->setChecked(false);
+	actionLightTheme->setChecked(false);
+	actionDarkTheme->setChecked(true);
+	
+	currentTheme = 2;
+	ApplyTheme(2);
 }
 
 void MainWindow::DetectSystemTheme(void)
@@ -1921,17 +1950,8 @@ QLabel {
 )";
 	}
 	
-	// Update header frame style for dark/light theme
-	if (themeType == 2) // Dark theme
-	{
-		headerFrame->setStyleSheet(headerFrame->styleSheet() + R"(
-QFrame#headerFrame {
-    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, 
-                                stop: 0 #37474F, stop: 1 #263238) !important;
-    border-bottom: 2px solid #1A1A1A !important;
-}
-)");
-	}
+	// Apply theme to main interface
+	functionTabWidget->setStyleSheet(styleSheet);
 	
 	this->setStyleSheet(styleSheet);
 }
