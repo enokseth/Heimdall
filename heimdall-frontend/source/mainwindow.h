@@ -93,6 +93,7 @@ namespace HeimdallFrontend
 			bool heimdallFailed;
 			HeimdallState heimdallState;
 			QProcess heimdallProcess;
+			QProcess adbProcess;
 
 			PackageData loadedPackageData;
 			
@@ -104,9 +105,13 @@ namespace HeimdallFrontend
 
 			bool verboseOutput;
 			bool resume;
+			int currentTheme; // 0: System, 1: Light, 2: Dark
 
 
 			void StartHeimdall(const QStringList& arguments);
+			void ApplyTheme(int themeType);
+			void DetectSystemTheme(void);
+			void adaptWidgetsToSize(const QSize &size);
 
 			void UpdateUnusedPartitionIds(void);
 			bool ReadPit(QFile *file);
@@ -122,6 +127,7 @@ namespace HeimdallFrontend
 			void UpdateFlashInterfaceAvailability(void);
 			void UpdateCreatePackageInterfaceAvailability(void);
 			void UpdateUtilitiesInterfaceAvailability(void);
+			void UpdateAdbCommandsInterfaceAvailability(void);
 			void UpdateInterfaceAvailability(void);
 
 			void UpdatePartitionNamesInterface(void);
@@ -130,12 +136,17 @@ namespace HeimdallFrontend
 
 			explicit MainWindow(QWidget *parent = 0);
 			~MainWindow();
+			
+		protected:
+			bool eventFilter(QObject *obj, QEvent *event) override;
+			void resizeEvent(QResizeEvent *event) override;
 
 		public slots:
 
 			void OpenDonationWebpage(void);
 			void SetVerboseOutput(bool enabled);
 			void ShowAbout(void);
+			void ChangeTheme(int themeIndex);
 
 			void FunctionTabChanged(int index);
 
@@ -196,10 +207,29 @@ namespace HeimdallFrontend
 			void SelectPrintPitFile(void);
 			void PrintPit(void);
 
+			// ADB Commands Tab
+			void RebootToRecovery(void);
+			void RebootToDownload(void);
+			void RebootToFastboot(void);
+			void ShutdownDevice(void);
+			void ExecuteCustomAdbCommand(void);
+			void RefreshDeviceInfo(void);
+			void UpdateAdbInterface(void);
+			void ListAdbDevices(void);
+			void AdbShellLs(void);
+			void AdbLogcat(void);
+			void InstallApk(void);
+			void ClearAdbOutput(void);
+
 			// Heimdall Command Line
 			void HandleHeimdallStdout(void);
 			void HandleHeimdallReturned(int exitCode, QProcess::ExitStatus exitStatus);
 			void HandleHeimdallError(QProcess::ProcessError error);
+			
+			// ADB Command Line
+			void HandleAdbStdout(void);
+			void HandleAdbReturned(int exitCode, QProcess::ExitStatus exitStatus);
+			void HandleAdbError(QProcess::ProcessError error);
 	};
 }
 

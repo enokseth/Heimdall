@@ -332,12 +332,31 @@ void MainWindow::UpdateUtilitiesInterfaceAvailability(void)
 	}
 }
 
+void MainWindow::UpdateAdbCommandsInterfaceAvailability(void)
+{
+	bool adbAvailable = (adbProcess.state() != QProcess::Running);
+	
+	rebootRecoveryButton->setEnabled(adbAvailable);
+	rebootDownloadButton->setEnabled(adbAvailable);
+	rebootFastbootButton->setEnabled(adbAvailable);
+	shutdownButton->setEnabled(adbAvailable);
+	executeAdbCommandButton->setEnabled(adbAvailable && !customAdbCommandLineEdit->text().isEmpty());
+	refreshDeviceInfoButton->setEnabled(adbAvailable);
+	customAdbCommandLineEdit->setEnabled(adbAvailable);
+	adbDevicesButton->setEnabled(adbAvailable);
+	adbShellLsButton->setEnabled(adbAvailable);
+	adbLogcatButton->setEnabled(adbAvailable);
+	adbInstallButton->setEnabled(adbAvailable);
+	clearAdbOutputButton->setEnabled(true);
+}
+
 void MainWindow::UpdateInterfaceAvailability(void)
 {
 	UpdateLoadPackageInterfaceAvailability();
 	UpdateFlashInterfaceAvailability();
 	UpdateCreatePackageInterfaceAvailability();
 	UpdateUtilitiesInterfaceAvailability();
+	UpdateAdbCommandsInterfaceAvailability();
 
 	if (!!(heimdallState & HeimdallState::Stopped))
 	{		
@@ -469,10 +488,39 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 	QObject::connect(pitSaveAsButton, SIGNAL(clicked()), this, SLOT(SelectPitDestination()));
 	QObject::connect(downloadPitButton, SIGNAL(clicked()), this, SLOT(DownloadPit()));
 
+	// ADB Commands Tab
+	QObject::connect(rebootRecoveryButton, SIGNAL(clicked()), this, SLOT(RebootToRecovery()));
+	QObject::connect(rebootDownloadButton, SIGNAL(clicked()), this, SLOT(RebootToDownload()));
+	QObject::connect(rebootFastbootButton, SIGNAL(clicked()), this, SLOT(RebootToFastboot()));
+	QObject::connect(shutdownButton, SIGNAL(clicked()), this, SLOT(ShutdownDevice()));
+	QObject::connect(executeAdbCommandButton, SIGNAL(clicked()), this, SLOT(ExecuteCustomAdbCommand()));
+	QObject::connect(refreshDeviceInfoButton, SIGNAL(clicked()), this, SLOT(RefreshDeviceInfo()));
+	QObject::connect(customAdbCommandLineEdit, SIGNAL(textChanged(const QString&)), this, SLOT(UpdateAdbInterface()));
+	QObject::connect(adbDevicesButton, SIGNAL(clicked()), this, SLOT(ListAdbDevices()));
+	QObject::connect(adbShellLsButton, SIGNAL(clicked()), this, SLOT(AdbShellLs()));
+	QObject::connect(adbLogcatButton, SIGNAL(clicked()), this, SLOT(AdbLogcat()));
+	QObject::connect(adbInstallButton, SIGNAL(clicked()), this, SLOT(InstallApk()));
+	QObject::connect(clearAdbOutputButton, SIGNAL(clicked()), this, SLOT(ClearAdbOutput()));
+
+	// Theme System
+	QObject::connect(themeSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeTheme(int)));
+
 	// Heimdall Command Line
 	QObject::connect(&heimdallProcess, SIGNAL(readyRead()), this, SLOT(HandleHeimdallStdout()));
 	QObject::connect(&heimdallProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(HandleHeimdallReturned(int, QProcess::ExitStatus)));
 	QObject::connect(&heimdallProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(HandleHeimdallError(QProcess::ProcessError)));
+
+	// ADB Command Line  
+	QObject::connect(&adbProcess, SIGNAL(readyRead()), this, SLOT(HandleAdbStdout()));
+	QObject::connect(&adbProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(HandleAdbReturned(int, QProcess::ExitStatus)));
+	QObject::connect(&adbProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(HandleAdbError(QProcess::ProcessError)));
+
+	// Initialize theme system
+	currentTheme = 0; // Default to system theme
+	ApplyTheme(currentTheme);
+	
+	// Make interface responsive by connecting to resize events
+	this->installEventFilter(this);
 }
 
 MainWindow::~MainWindow()
@@ -1349,5 +1397,601 @@ void MainWindow::HandleHeimdallError(QProcess::ProcessError error)
 		
 		heimdallState = HeimdallState::Stopped;
 		UpdateInterfaceAvailability();
+	}
+}
+
+// ADB Commands Implementation
+
+void MainWindow::RebootToRecovery(void)
+{
+	adbStatusLabel->setText("ADB Status: Rebooting to recovery...");
+	adbOutputTextEdit->append("Executing: adb reboot recovery");
+	
+	QStringList arguments;
+	arguments << "reboot" << "recovery";
+	
+	adbProcess.start("adb", arguments);
+}
+
+void MainWindow::RebootToDownload(void)
+{
+	adbStatusLabel->setText("ADB Status: Rebooting to download mode...");
+	adbOutputTextEdit->append("Executing: adb reboot download");
+	
+	QStringList arguments;
+	arguments << "reboot" << "download";
+	
+	adbProcess.start("adb", arguments);
+}
+
+void MainWindow::RebootToFastboot(void)
+{
+	adbStatusLabel->setText("ADB Status: Rebooting to fastboot...");
+	adbOutputTextEdit->append("Executing: adb reboot bootloader");
+	
+	QStringList arguments;
+	arguments << "reboot" << "bootloader";
+	
+	adbProcess.start("adb", arguments);
+}
+
+void MainWindow::ShutdownDevice(void)
+{
+	adbStatusLabel->setText("ADB Status: Shutting down device...");
+	adbOutputTextEdit->append("Executing: adb shell reboot -p");
+	
+	QStringList arguments;
+	arguments << "shell" << "reboot" << "-p";
+	
+	adbProcess.start("adb", arguments);
+}
+
+void MainWindow::ExecuteCustomAdbCommand(void)
+{
+	QString command = customAdbCommandLineEdit->text().trimmed();
+	if (command.isEmpty())
+		return;
+		
+	adbStatusLabel->setText("ADB Status: Executing custom command...");
+	adbOutputTextEdit->append("Executing: adb " + command);
+	
+	QStringList arguments = command.split(' ', Qt::SkipEmptyParts);
+	
+	adbProcess.start("adb", arguments);
+}
+
+void MainWindow::RefreshDeviceInfo(void)
+{
+	adbStatusLabel->setText("ADB Status: Getting device information...");
+	deviceInfoTextEdit->append("=== Device Information ===");
+	
+	QStringList arguments;
+	arguments << "shell" << "getprop";
+	
+	adbProcess.start("adb", arguments);
+}
+
+void MainWindow::UpdateAdbInterface(void)
+{
+	UpdateInterfaceAvailability();
+}
+
+void MainWindow::ListAdbDevices(void)
+{
+	adbStatusLabel->setText("ADB Status: Listing connected devices...");
+	adbOutputTextEdit->append("=== ADB Devices ===");
+	adbOutputTextEdit->append("Executing: adb devices -l");
+	
+	QStringList arguments;
+	arguments << "devices" << "-l";
+	
+	adbProcess.start("adb", arguments);
+}
+
+void MainWindow::AdbShellLs(void)
+{
+	adbStatusLabel->setText("ADB Status: Listing root directory...");
+	adbOutputTextEdit->append("=== Shell ls -la / ===");
+	adbOutputTextEdit->append("Executing: adb shell ls -la /");
+	
+	QStringList arguments;
+	arguments << "shell" << "ls" << "-la" << "/";
+	
+	adbProcess.start("adb", arguments);
+}
+
+void MainWindow::AdbLogcat(void)
+{
+	adbStatusLabel->setText("ADB Status: Getting recent logs...");
+	adbOutputTextEdit->append("=== Recent Logcat ===");
+	adbOutputTextEdit->append("Executing: adb logcat -d -t 50");
+	
+	QStringList arguments;
+	arguments << "logcat" << "-d" << "-t" << "50";
+	
+	adbProcess.start("adb", arguments);
+}
+
+void MainWindow::InstallApk(void)
+{
+	QString apkPath = PromptFileSelection("Select APK file to install", "Android Package (*.apk)");
+	
+	if (apkPath.isEmpty())
+		return;
+		
+	adbStatusLabel->setText("ADB Status: Installing APK...");
+	adbOutputTextEdit->append("=== Installing APK ===");
+	adbOutputTextEdit->append("Executing: adb install " + apkPath);
+	
+	QStringList arguments;
+	arguments << "install" << apkPath;
+	
+	adbProcess.start("adb", arguments);
+}
+
+void MainWindow::ClearAdbOutput(void)
+{
+	adbOutputTextEdit->clear();
+	adbStatusLabel->setText("ADB Status: Output cleared");
+}
+
+void MainWindow::HandleAdbStdout(void)
+{
+	QByteArray data = adbProcess.readAll();
+	QString output = QString::fromUtf8(data);
+	
+	// Remove the command prefix if it shows up in output
+	if (output.startsWith("Executing: "))
+		return;
+	
+	if (adbProcess.arguments().contains("getprop"))
+	{
+		deviceInfoTextEdit->append(output);
+	}
+	else
+	{
+		// Add timestamp for better readability
+		if (!output.trimmed().isEmpty())
+		{
+			adbOutputTextEdit->append(output.trimmed());
+		}
+	}
+}
+
+void MainWindow::HandleAdbReturned(int exitCode, QProcess::ExitStatus exitStatus)
+{
+	if (exitStatus == QProcess::NormalExit)
+	{
+		if (exitCode == 0)
+		{
+			adbStatusLabel->setText("ADB Status: Command completed successfully");
+			
+			// Add helpful completion messages
+			if (adbProcess.arguments().contains("devices"))
+			{
+				adbOutputTextEdit->append("\n--- Device list complete ---\n");
+			}
+			else if (adbProcess.arguments().contains("install"))
+			{
+				adbOutputTextEdit->append("\n--- APK installation complete ---\n");
+			}
+			else if (adbProcess.arguments().contains("logcat"))
+			{
+				adbOutputTextEdit->append("\n--- Logcat dump complete ---\n");
+			}
+		}
+		else
+		{
+			adbStatusLabel->setText("ADB Status: Command failed (exit code: " + QString::number(exitCode) + ")");
+			
+			// Provide helpful error suggestions
+			if (exitCode == 1)
+			{
+				if (adbProcess.arguments().contains("shell"))
+				{
+					adbOutputTextEdit->append("\nHINT: Shell command failed. Check device connection or try a different path/command.");
+				}
+				else
+				{
+					adbOutputTextEdit->append("\nHINT: Command failed. Make sure device is connected and ADB is authorized.");
+				}
+			}
+			adbOutputTextEdit->append("Command failed with exit code: " + QString::number(exitCode));
+		}
+	}
+	else
+	{
+		adbStatusLabel->setText("ADB Status: Command crashed");
+		adbOutputTextEdit->append("ERROR: Command crashed!");
+	}
+	
+	UpdateInterfaceAvailability();
+}
+
+void MainWindow::HandleAdbError(QProcess::ProcessError error)
+{
+	QString errorString;
+	switch (error)
+	{
+		case QProcess::FailedToStart:
+			errorString = "Failed to start ADB. Is ADB installed and in PATH?";
+			adbOutputTextEdit->append("\nTROUBLESHOOTING:");
+			adbOutputTextEdit->append("1. Install Android SDK Platform Tools");
+			adbOutputTextEdit->append("2. Add ADB to system PATH");
+			adbOutputTextEdit->append("3. Enable USB Debugging on device");
+			break;
+		case QProcess::Crashed:
+			errorString = "ADB process crashed";
+			break;
+		case QProcess::Timedout:
+			errorString = "ADB process timed out";
+			break;
+		case QProcess::ReadError:
+			errorString = "ADB read error";
+			break;
+		case QProcess::WriteError:
+			errorString = "ADB write error";
+			break;
+		default:
+			errorString = "Unknown ADB error";
+			break;
+	}
+	
+	adbStatusLabel->setText("ADB Status: Error - " + errorString);
+	adbOutputTextEdit->append("ERROR: " + errorString);
+	
+	UpdateInterfaceAvailability();
+}
+
+// Theme System Implementation
+
+void MainWindow::ChangeTheme(int themeIndex)
+{
+	currentTheme = themeIndex;
+	ApplyTheme(themeIndex);
+}
+
+void MainWindow::DetectSystemTheme(void)
+{
+	// Try to detect system theme (simplified detection)
+	QPalette palette = QApplication::palette();
+	QColor backgroundColor = palette.color(QPalette::Window);
+	
+	// If background is dark, assume dark theme
+	bool isDarkTheme = backgroundColor.lightness() < 128;
+	ApplyTheme(isDarkTheme ? 2 : 1);
+}
+
+void MainWindow::ApplyTheme(int themeType)
+{
+	QString styleSheet;
+	
+	if (themeType == 0) // Follow System
+	{
+		DetectSystemTheme();
+		return;
+	}
+	else if (themeType == 1) // Light Theme
+	{
+		styleSheet = R"(
+/* Light Theme */
+QMainWindow {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #F8F9FA, stop: 1 #E9ECEF);
+    color: #212529;
+}
+
+QGroupBox {
+    font-weight: bold;
+    border: 2px solid #DEE2E6;
+    border-radius: 8px;
+    margin-top: 10px;
+    padding: 8px;
+    background: white;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 8px 0 8px;
+    color: #495057;
+    background: white;
+}
+
+QPushButton {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #4A90E2, stop: 1 #357ABD);
+    border: 1px solid #2E5984;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    padding: 6px 12px;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #5BA0F2, stop: 1 #4682CD);
+}
+
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #3A7BC2, stop: 1 #286AAD);
+}
+
+QPushButton:disabled {
+    background: #ADB5BD;
+    border-color: #6C757D;
+    color: #6C757D;
+}
+
+QLineEdit, QTextEdit, QPlainTextEdit {
+    background: white;
+    border: 2px solid #CED4DA;
+    border-radius: 6px;
+    padding: 6px;
+    color: #212529;
+    selection-background-color: #4A90E2;
+    selection-color: white;
+}
+
+QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus {
+    border-color: #4A90E2;
+    background: #F8F9FA;
+}
+
+QComboBox {
+    background: white;
+    border: 2px solid #CED4DA;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: #212529;
+    min-width: 6em;
+}
+
+QComboBox:focus {
+    border-color: #4A90E2;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 20px;
+    border-left: 1px solid #CED4DA;
+}
+
+QListWidget {
+    background: white;
+    border: 2px solid #CED4DA;
+    border-radius: 6px;
+    color: #212529;
+    alternate-background-color: #F8F9FA;
+}
+
+QListWidget::item:selected {
+    background: #4A90E2;
+    color: white;
+}
+
+QListWidget::item:hover {
+    background: #E3F2FD;
+}
+
+QProgressBar {
+    border: 2px solid #CED4DA;
+    border-radius: 6px;
+    background: #E9ECEF;
+    text-align: center;
+}
+
+QProgressBar::chunk {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+                                stop: 0 #28A745, stop: 1 #20C997);
+    border-radius: 4px;
+}
+
+QLabel {
+    color: #495057;
+}
+)";
+	}
+	else if (themeType == 2) // Dark Theme
+	{
+		styleSheet = R"(
+/* Dark Theme */
+QMainWindow {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #2B2B2B, stop: 1 #1E1E1E);
+    color: #E0E0E0;
+}
+
+QGroupBox {
+    font-weight: bold;
+    border: 2px solid #404040;
+    border-radius: 8px;
+    margin-top: 10px;
+    padding: 8px;
+    background: #383838;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 8px 0 8px;
+    color: #E0E0E0;
+    background: #383838;
+}
+
+QPushButton {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #4A90E2, stop: 1 #357ABD);
+    border: 1px solid #2E5984;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    padding: 6px 12px;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #5BA0F2, stop: 1 #4682CD);
+}
+
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #3A7BC2, stop: 1 #286AAD);
+}
+
+QPushButton:disabled {
+    background: #555555;
+    border-color: #777777;
+    color: #AAAAAA;
+}
+
+QLineEdit, QTextEdit, QPlainTextEdit {
+    background: #2B2B2B;
+    border: 2px solid #555555;
+    border-radius: 6px;
+    padding: 6px;
+    color: #E0E0E0;
+    selection-background-color: #4A90E2;
+    selection-color: white;
+}
+
+QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus {
+    border-color: #4A90E2;
+    background: #333333;
+}
+
+QComboBox {
+    background: #2B2B2B;
+    border: 2px solid #555555;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: #E0E0E0;
+    min-width: 6em;
+}
+
+QComboBox:focus {
+    border-color: #4A90E2;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 20px;
+    border-left: 1px solid #555555;
+}
+
+QListWidget {
+    background: #2B2B2B;
+    border: 2px solid #555555;
+    border-radius: 6px;
+    color: #E0E0E0;
+    alternate-background-color: #333333;
+}
+
+QListWidget::item:selected {
+    background: #4A90E2;
+    color: white;
+}
+
+QListWidget::item:hover {
+    background: #404040;
+}
+
+QProgressBar {
+    border: 2px solid #555555;
+    border-radius: 6px;
+    background: #1E1E1E;
+    text-align: center;
+    color: #E0E0E0;
+}
+
+QProgressBar::chunk {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+                                stop: 0 #28A745, stop: 1 #20C997);
+    border-radius: 4px;
+}
+
+QLabel {
+    color: #E0E0E0;
+}
+)";
+	}
+	
+	// Update header frame style for dark/light theme
+	if (themeType == 2) // Dark theme
+	{
+		headerFrame->setStyleSheet(headerFrame->styleSheet() + R"(
+QFrame#headerFrame {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, 
+                                stop: 0 #37474F, stop: 1 #263238) !important;
+    border-bottom: 2px solid #1A1A1A !important;
+}
+)");
+	}
+	
+	this->setStyleSheet(styleSheet);
+}
+
+// Responsive handling
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+	if (event->type() == QEvent::Resize)
+	{
+		// Force update of non-layout widgets when window resizes
+		QResizeEvent *resizeEvent = static_cast<QResizeEvent*>(event);
+		adaptWidgetsToSize(resizeEvent->size());
+	}
+	return QMainWindow::eventFilter(obj, event);
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+	QMainWindow::resizeEvent(event);
+	adaptWidgetsToSize(event->size());
+}
+
+void MainWindow::adaptWidgetsToSize(const QSize &size)
+{
+	// Get available size for tabs (minus header and margins)
+	int availableWidth = size.width() - 20;  // Margins
+	int availableHeight = size.height() - 100; // Header + margins + menu
+	
+	// Force tabs to use available space for non-layout tabs
+	if (functionTabWidget->currentWidget())
+	{
+		QWidget *currentTab = functionTabWidget->currentWidget();
+		
+		// Flash Tab responsive adjustments
+		if (currentTab->objectName() == "flashTab")
+		{
+			if (auto statusGroup = currentTab->findChild<QGroupBox*>("statusGroup"))
+			{
+				statusGroup->resize(availableWidth * 0.6, 170);
+				statusGroup->move(10, availableHeight - 180);
+			}
+		}
+		// Load Package Tab responsive adjustments  
+		else if (currentTab->objectName() == "loadPackageTab")
+		{
+			if (auto includedFilesGroup = currentTab->findChild<QGroupBox*>("includedFilesGroup"))
+			{
+				includedFilesGroup->resize(availableWidth * 0.35, availableHeight - 20);
+				includedFilesGroup->move(availableWidth * 0.6, 10);
+			}
+		}
+		// Create Package Tab responsive adjustments
+		else if (currentTab->objectName() == "createPackageTab")  
+		{
+			// Similar adjustments for create package tab
+		}
+		// Utilities Tab responsive adjustments
+		else if (currentTab->objectName().startsWith("tab"))
+		{
+			// Utilities tab adjustments
+		}
 	}
 }

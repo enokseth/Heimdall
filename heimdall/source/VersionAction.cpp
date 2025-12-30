@@ -19,6 +19,7 @@
  THE SOFTWARE.*/
 
 // Heimdall
+
 #include "Heimdall.h"
 #include "Interface.h"
 #include "VersionAction.h"

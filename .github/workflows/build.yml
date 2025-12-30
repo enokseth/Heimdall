@@ -7,11 +7,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt -y install build-essential cmake zlib1g-dev libgl1-mesa-dev libgl1-mesa-glx libusb-1.0-0-dev qt5-default
+        sudo apt -y install build-essential cmake zlib1g-dev libgl1-mesa-dev libgl1-mesa-glx libusb-1.0-0-dev qtbase5-dev qttools5-dev-tools
     - name: Build
       run: |
         mkdir build
@@ -23,7 +23,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
     - uses: msys2/setup-msys2@v2
       with:
         update: true

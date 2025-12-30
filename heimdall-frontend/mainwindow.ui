@@ -6,26 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>788</width>
-    <height>525</height>
+    <width>900</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>1</horstretch>
+    <verstretch>1</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>788</width>
-    <height>525</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>788</width>
-    <height>525</height>
+    <width>800</width>
+    <height>600</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -53,35 +47,195 @@
    <enum>QTabWidget::Rounded</enum>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTabWidget" name="functionTabWidget">
+   <layout class="QVBoxLayout" name="mainVerticalLayout">
+    <property name="spacing">
+     <number>5</number>
+    </property>
+    <property name="leftMargin">
+     <number>5</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>5</number>
+    </property>
+    <property name="bottomMargin">
+     <number>5</number>
+    </property>
+    <item>
+     <widget class="QFrame" name="headerFrame">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>50</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>50</height>
+       </size>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QFrame#headerFrame {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, 
+                                stop: 0 #4A90E2, stop: 1 #357ABD);
+    border-bottom: 2px solid #2E5984;
+    border-radius: 8px 8px 0px 0px;
+}
+
+QLabel#titleLabel {
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 8px;
+}
+
+QComboBox#themeSelector {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-weight: bold;
+    color: #2E5984;
+    min-width: 120px;
+}
+
+QComboBox#themeSelector::drop-down {
+    border: none;
+    width: 20px;
+}
+
+QComboBox#themeSelector::down-arrow {
+    image: none;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid #2E5984;
+    width: 0;
+    height: 0;
+}</string>
+      </property>
+      <layout class="QHBoxLayout" name="headerHorizontalLayout">
+       <property name="leftMargin">
+        <number>20</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>20</number>
+       </property>
+       <property name="bottomMargin">
+        <number>10</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="titleLabel">
+         <property name="text">
+          <string>🔥 Heimdall Frontend</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="headerSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QComboBox" name="themeSelector">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <item>
+          <property name="text">
+           <string>🌟 Follow System</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>☀️ Light Theme</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>🌙 Dark Theme</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="functionTabWidget">
     <property name="enabled">
      <bool>true</bool>
     </property>
-    <property name="geometry">
-     <rect>
-      <x>5</x>
-      <y>0</y>
-      <width>780</width>
-      <height>501</height>
-     </rect>
-    </property>
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>1</horstretch>
+      <verstretch>1</verstretch>
      </sizepolicy>
     </property>
     <property name="minimumSize">
      <size>
       <width>780</width>
-      <height>0</height>
+      <height>500</height>
      </size>
     </property>
-    <property name="maximumSize">
-     <size>
-      <width>780</width>
-      <height>780</height>
-     </size>
+    <property name="styleSheet">
+     <string notr="true">QTabWidget::pane {
+    border: 2px solid #E1E8ED;
+    border-radius: 8px;
+    background: white;
+    margin-top: -2px;
+}
+
+QTabWidget::tab-bar {
+    left: 10px;
+}
+
+QTabBar::tab {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #F8F9FA, stop: 1 #E9ECEF);
+    border: 1px solid #CED4DA;
+    border-bottom: none;
+    border-radius: 8px 8px 0px 0px;
+    padding: 8px 16px;
+    margin-right: 2px;
+    font-weight: bold;
+    color: #495057;
+}
+
+QTabBar::tab:selected {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #4A90E2, stop: 1 #357ABD);
+    color: white;
+    border-color: #2E5984;
+}
+
+QTabBar::tab:hover:!selected {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #E3F2FD, stop: 1 #BBDEFB);
+    color: #1976D2;
+}</string>
     </property>
     <property name="currentIndex">
      <number>0</number>
@@ -93,830 +247,750 @@
      <attribute name="title">
       <string>Load Package</string>
      </attribute>
-     <widget class="QGroupBox" name="includedFilesGroup">
-      <property name="geometry">
-       <rect>
-        <x>510</x>
-        <y>10</y>
-        <width>251</width>
-        <height>331</height>
-       </rect>
+     <layout class="QHBoxLayout" name="loadPackageHorizontalLayout">
+      <property name="spacing">
+       <number>15</number>
       </property>
-      <property name="title">
-       <string>Package Files</string>
-      </property>
-      <widget class="QListWidget" name="includedFilesListWidget">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>231</width>
-         <height>291</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="platformGroup">
-      <property name="geometry">
-       <rect>
-        <x>340</x>
-        <y>80</y>
-        <width>161</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Platform</string>
-      </property>
-      <widget class="QLineEdit" name="platformLineEdit">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>141</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="supportedDevicesGroup">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>220</y>
-        <width>491</width>
-        <height>241</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Supported Devices</string>
-      </property>
-      <widget class="QListWidget" name="supportedDevicesListWidget">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>471</width>
-         <height>201</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QRadioButton" name="repartitionRadioButton">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>520</x>
-        <y>360</y>
-        <width>241</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Repartition Recommended</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="loadFirmwareButton">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>550</x>
-        <y>420</y>
-        <width>171</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-      <property name="text">
-       <string>Load / Customise</string>
-      </property>
-     </widget>
-     <widget class="QGroupBox" name="firmwareNameGroup">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>80</y>
-        <width>211</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Firmware Name</string>
-      </property>
-      <widget class="QLineEdit" name="firmwareNameLineEdit">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>191</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="firmwarePackageGroup">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>491</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Heimdall Firmware Package</string>
-      </property>
-      <widget class="QLineEdit" name="firmwarePackageLineEdit">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>391</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="browseFirmwarePackageButton">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>410</x>
-         <y>30</y>
-         <width>71</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="text">
-        <string>Browse</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="versionGroup">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>80</y>
-        <width>101</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Version</string>
-      </property>
-      <widget class="QLineEdit" name="versionLineEdit">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>81</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="developerGroup">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>150</y>
-        <width>491</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Developer(s)</string>
-      </property>
-      <widget class="QLineEdit" name="developerNamesLineEdit">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>281</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="developerDonateButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>410</x>
-         <y>30</y>
-         <width>71</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="text">
-        <string>Donate</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="developerHomepageButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>300</x>
-         <y>30</y>
-         <width>101</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="text">
-        <string>Homepage</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QRadioButton" name="noRebootRadioButton">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>520</x>
-        <y>390</y>
-        <width>241</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>No Reboot Recommended</string>
-      </property>
-     </widget>
+      <item>
+       <layout class="QVBoxLayout" name="loadPackageLeftLayout">
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <item>
+         <widget class="QGroupBox" name="firmwarePackageGroup">
+          <property name="title">
+           <string>Heimdall Firmware Package</string>
+          </property>
+          <property name="minimumWidth">
+           <number>490</number>
+          </property>
+          <layout class="QHBoxLayout" name="firmwarePackageLayout">
+           <item>
+            <widget class="QLineEdit" name="firmwarePackageLineEdit">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="browseFirmwarePackageButton">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="text">
+              <string>Browse</string>
+             </property>
+             <property name="maximumWidth">
+              <number>80</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="firmwareInfoLayout">
+          <item>
+           <widget class="QGroupBox" name="firmwareNameGroup">
+            <property name="title">
+             <string>Firmware Name</string>
+            </property>
+            <property name="minimumWidth">
+             <number>210</number>
+            </property>
+            <layout class="QVBoxLayout" name="firmwareNameLayout">
+             <item>
+              <widget class="QLineEdit" name="firmwareNameLineEdit">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="versionGroup">
+            <property name="title">
+             <string>Version</string>
+            </property>
+            <property name="minimumWidth">
+             <number>100</number>
+            </property>
+            <layout class="QVBoxLayout" name="versionLayout">
+             <item>
+              <widget class="QLineEdit" name="versionLineEdit">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="platformGroup">
+            <property name="title">
+             <string>Platform</string>
+            </property>
+            <property name="minimumWidth">
+             <number>160</number>
+            </property>
+            <layout class="QVBoxLayout" name="platformLayout">
+             <item>
+              <widget class="QLineEdit" name="platformLineEdit">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="developerGroup">
+          <property name="title">
+           <string>Developer(s)</string>
+          </property>
+          <property name="minimumWidth">
+           <number>490</number>
+          </property>
+          <layout class="QHBoxLayout" name="developerLayout">
+           <item>
+            <widget class="QLineEdit" name="developerNamesLineEdit">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="developerHomepageButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="text">
+              <string>Homepage</string>
+             </property>
+             <property name="maximumWidth">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="developerDonateButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="text">
+              <string>Donate</string>
+             </property>
+             <property name="maximumWidth">
+              <number>80</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="supportedDevicesGroup">
+          <property name="title">
+           <string>Supported Devices</string>
+          </property>
+          <property name="minimumWidth">
+           <number>490</number>
+          </property>
+          <property name="minimumHeight">
+           <number>240</number>
+          </property>
+          <layout class="QVBoxLayout" name="supportedDevicesLayout">
+           <item>
+            <widget class="QListWidget" name="supportedDevicesListWidget"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="loadPackageRightLayout">
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <item>
+         <widget class="QGroupBox" name="includedFilesGroup">
+          <property name="title">
+           <string>Package Files</string>
+          </property>
+          <property name="minimumWidth">
+           <number>250</number>
+          </property>
+          <property name="maximumWidth">
+           <number>280</number>
+          </property>
+          <property name="minimumHeight">
+           <number>330</number>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <layout class="QVBoxLayout" name="includedFilesLayout">
+           <item>
+            <widget class="QListWidget" name="includedFilesListWidget"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="repartitionRadioButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Repartition Recommended</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="noRebootRadioButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>No Reboot Recommended</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="loadPackageVerticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="loadFirmwareButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="text">
+           <string>Load / Customise</string>
+          </property>
+          <property name="minimumHeight">
+           <number>30</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
     <widget class="QWidget" name="flashTab">
      <attribute name="title">
       <string>Flash</string>
      </attribute>
-     <widget class="QGroupBox" name="statusGroup">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>300</y>
-        <width>511</width>
-        <height>171</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Status</string>
-      </property>
-      <widget class="QProgressBar" name="flashProgressBar">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>280</x>
-         <y>130</y>
-         <width>221</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="value">
-        <number>0</number>
-       </property>
-      </widget>
-      <widget class="QPlainTextEdit" name="outputPlainTextEdit">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>491</width>
-         <height>81</height>
-        </rect>
-       </property>
-       <property name="undoRedoEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-       <property name="plainText">
-        <string notr="true"/>
-       </property>
-      </widget>
-      <widget class="QLabel" name="flashLabel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>130</y>
-         <width>261</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text">
-        <string notr="true">Ready</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::PlainText</enum>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="optionsGroup">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>751</width>
-        <height>281</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Options</string>
-      </property>
-      <widget class="QGroupBox" name="pitGroup">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>391</width>
-         <height>91</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>PIT</string>
-       </property>
-       <widget class="QLineEdit" name="pitLineEdit">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>30</y>
-          <width>261</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pitBrowseButton">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>280</x>
-          <y>30</y>
-          <width>71</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="text">
-         <string>Browse</string>
-        </property>
-        <property name="autoDefault">
-         <bool>false</bool>
-        </property>
-        <property name="default">
-         <bool>false</bool>
-        </property>
-        <property name="flat">
-         <bool>false</bool>
-        </property>
-       </widget>
-       <widget class="QLabel" name="pitBrowseTipLabel">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>360</x>
-          <y>30</y>
-          <width>21</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string notr="true">You can retrieve/download your device's PIT file from the Utilities tab.</string>
-        </property>
-        <property name="statusTip">
-         <string notr="true"/>
-        </property>
-        <property name="whatsThis">
-         <string notr="true"/>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::Panel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <property name="lineWidth">
-         <number>2</number>
-        </property>
-        <property name="midLineWidth">
-         <number>0</number>
-        </property>
-        <property name="text">
-         <string>?</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="repartitionCheckBox">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>60</y>
-          <width>131</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="toolTip">
-         <string notr="true">Repartitioning will wipe all data for your phone and install the selected PIT file.</string>
-        </property>
-        <property name="text">
-         <string>Repartition</string>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QGroupBox" name="partitionGroup">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>120</y>
-         <width>391</width>
-         <height>151</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Partition Details</string>
-       </property>
-       <widget class="QComboBox" name="partitionNameComboBox">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>140</x>
-          <y>30</y>
-          <width>241</width>
-          <height>22</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QLabel" name="partitionNameLabel">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>30</y>
-          <width>121</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Partition Name</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="partitionIdLabel">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>60</y>
-          <width>121</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Partition ID</string>
-        </property>
-       </widget>
-       <widget class="QGroupBox" name="partitionFileGroup">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>80</y>
-          <width>371</width>
-          <height>61</height>
-         </rect>
-        </property>
+     <layout class="QVBoxLayout" name="flashMainLayout">
+      <item>
+       <widget class="QGroupBox" name="optionsGroup">
         <property name="title">
-         <string>File</string>
+         <string>Options</string>
         </property>
-        <widget class="QLineEdit" name="partitionFileLineEdit">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>30</y>
-           <width>271</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="partitionFileBrowseButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>290</x>
-           <y>30</y>
-           <width>71</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Browse</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="optionsHorizontalLayout">
+         <item>
+          <layout class="QVBoxLayout" name="leftOptionsLayout">
+           <item>
+            <widget class="QGroupBox" name="pitGroup">
+             <property name="title">
+              <string>PIT</string>
+             </property>
+             <layout class="QHBoxLayout" name="pitLayout">
+              <item>
+               <widget class="QLineEdit" name="pitLineEdit">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pitBrowseButton">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="text">
+                 <string>Browse</string>
+                </property>
+                <property name="autoDefault">
+                 <bool>false</bool>
+                </property>
+                <property name="default">
+                 <bool>false</bool>
+                </property>
+                <property name="flat">
+                 <bool>false</bool>
+                </property>
+                <property name="maximumWidth">
+                 <number>80</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="pitBrowseTipLabel">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="toolTip">
+                 <string notr="true">You can retrieve/download your device's PIT file from the Utilities tab.</string>
+                </property>
+                <property name="statusTip">
+                 <string notr="true"/>
+                </property>
+                <property name="whatsThis">
+                 <string notr="true"/>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::Panel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <property name="lineWidth">
+                 <number>2</number>
+                </property>
+                <property name="midLineWidth">
+                 <number>0</number>
+                </property>
+                <property name="text">
+                 <string>?</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>25</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="repartitionCheckBox">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string notr="true">Repartitioning will wipe all data for your phone and install the selected PIT file.</string>
+             </property>
+             <property name="text">
+              <string>Repartition</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="partitionGroup">
+             <property name="title">
+              <string>Partition Details</string>
+             </property>
+             <layout class="QVBoxLayout" name="partitionDetailsLayout">
+              <item>
+               <layout class="QHBoxLayout" name="partitionNameLayout">
+                <item>
+                 <widget class="QLabel" name="partitionNameLabel">
+                  <property name="text">
+                   <string>Partition Name</string>
+                  </property>
+                  <property name="maximumWidth">
+                   <number>120</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="partitionNameComboBox">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="partitionIdLayout">
+                <item>
+                 <widget class="QLabel" name="partitionIdLabel">
+                  <property name="text">
+                   <string>Partition ID</string>
+                  </property>
+                  <property name="maximumWidth">
+                   <number>120</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="partitionIdLineEdit">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="partitionFileGroup">
+                <property name="title">
+                 <string>File</string>
+                </property>
+                <layout class="QHBoxLayout" name="partitionFileLayout">
+                 <item>
+                  <widget class="QLineEdit" name="partitionFileLineEdit">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="partitionFileBrowseButton">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="text">
+                    <string>Browse</string>
+                   </property>
+                   <property name="maximumWidth">
+                    <number>80</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="partitionsGroup">
+           <property name="title">
+            <string>Partitions (Files)</string>
+           </property>
+           <property name="maximumWidth">
+            <number>350</number>
+           </property>
+           <layout class="QVBoxLayout" name="partitionsLayout">
+            <item>
+             <widget class="QListWidget" name="partitionsListWidget">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="partitionButtonsLayout">
+              <item>
+               <widget class="QPushButton" name="addPartitionButton">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>Add</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="addPartitionTipLabel">
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="toolTip">
+                 <string notr="true">Use the &quot;Add&quot; button to add additional files to be flashed.</string>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::Panel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <property name="lineWidth">
+                 <number>2</number>
+                </property>
+                <property name="midLineWidth">
+                 <number>0</number>
+                </property>
+                <property name="text">
+                 <string>?</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>25</width>
+                  <height>25</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="partitionButtonsSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="removePartitionButton">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>Remove</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
        </widget>
-       <widget class="QLineEdit" name="partitionIdLineEdit">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>140</x>
-          <y>60</y>
-          <width>241</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QGroupBox" name="partitionsGroup">
-       <property name="geometry">
-        <rect>
-         <x>410</x>
-         <y>20</y>
-         <width>331</width>
-         <height>251</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Partitions (Files)</string>
-       </property>
-       <widget class="QPushButton" name="addPartitionButton">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>220</y>
-          <width>81</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Add</string>
-        </property>
-       </widget>
-       <widget class="QListWidget" name="partitionsListWidget">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>20</y>
-          <width>311</width>
-          <height>191</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="removePartitionButton">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>240</x>
-          <y>220</y>
-          <width>81</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Remove</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="addPartitionTipLabel">
-        <property name="geometry">
-         <rect>
-          <x>100</x>
-          <y>220</y>
-          <width>21</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string notr="true">Use the &quot;Add&quot; button to add additional files to be flashed.</string>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::Panel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <property name="lineWidth">
-         <number>2</number>
-        </property>
-        <property name="midLineWidth">
-         <number>0</number>
-        </property>
-        <property name="text">
-         <string>?</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="sessionGroup">
-      <property name="geometry">
-       <rect>
-        <x>530</x>
-        <y>300</y>
-        <width>231</width>
-        <height>171</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Session</string>
-      </property>
-      <widget class="QCheckBox" name="noRebootCheckBox">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>211</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string notr="true">Can be enabled to prevent your device rebooting after the flash finishes.</string>
-       </property>
-       <property name="text">
-        <string>No Reboot</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="resumeCheckbox">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>60</y>
-         <width>211</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string notr="true">Can be enabled to prevent your device rebooting after the flash finishes.</string>
-       </property>
-       <property name="text">
-        <string>Resume (use after &quot;No Reboot&quot;)</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="startFlashButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>120</y>
-         <width>111</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Start</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="startFlashTipLabel">
-       <property name="geometry">
-        <rect>
-         <x>170</x>
-         <y>120</y>
-         <width>21</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string notr="true">The &quot;Start&quot; button will remain inactive until at least one partition/file is added.</string>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Panel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <property name="lineWidth">
-        <number>2</number>
-       </property>
-       <property name="midLineWidth">
-        <number>0</number>
-       </property>
-       <property name="text">
-        <string>?</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="flashBottomLayout">
+        <item>
+         <widget class="QGroupBox" name="statusGroup">
+          <property name="title">
+           <string>Status</string>
+          </property>
+          <layout class="QVBoxLayout" name="statusLayout">
+           <item>
+            <widget class="QPlainTextEdit" name="outputPlainTextEdit">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="undoRedoEnabled">
+              <bool>false</bool>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="plainText">
+              <string notr="true"/>
+             </property>
+             <property name="maximumHeight">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="flashProgressLayout">
+             <item>
+              <widget class="QLabel" name="flashLabel">
+               <property name="layoutDirection">
+                <enum>Qt::RightToLeft</enum>
+               </property>
+               <property name="text">
+                <string notr="true">Ready</string>
+               </property>
+               <property name="textFormat">
+                <enum>Qt::PlainText</enum>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QProgressBar" name="flashProgressBar">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="value">
+                <number>0</number>
+               </property>
+               <property name="maximumWidth">
+                <number>250</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="sessionGroup">
+          <property name="title">
+           <string>Session</string>
+          </property>
+          <property name="maximumWidth">
+           <number>250</number>
+          </property>
+          <layout class="QVBoxLayout" name="sessionLayout">
+           <item>
+            <widget class="QCheckBox" name="noRebootCheckBox">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string notr="true">Can be enabled to prevent your device rebooting after the flash finishes.</string>
+             </property>
+             <property name="text">
+              <string>No Reboot</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="resumeCheckbox">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string notr="true">Can be enabled to prevent your device rebooting after the flash finishes.</string>
+             </property>
+             <property name="text">
+              <string>Resume (use after &quot;No Reboot&quot;)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="sessionSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="startFlashLayout">
+             <item>
+              <widget class="QPushButton" name="startFlashButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Start</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="startFlashTipLabel">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="toolTip">
+                <string notr="true">The &quot;Start&quot; button will remain inactive until at least one partition/file is added.</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::Panel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <property name="lineWidth">
+                <number>2</number>
+               </property>
+               <property name="midLineWidth">
+                <number>0</number>
+               </property>
+               <property name="text">
+                <string>?</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>25</width>
+                 <height>25</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
     <widget class="QWidget" name="createPackageTab">
      <property name="enabled">
@@ -925,966 +999,1074 @@
      <attribute name="title">
       <string>Create Package</string>
      </attribute>
-     <widget class="QGroupBox" name="createSupportedDevicesGroup">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>230</y>
-        <width>471</width>
-        <height>231</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Supported Devices</string>
-      </property>
-      <widget class="QListWidget" name="createDevicesListWidget">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>451</width>
-         <height>161</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="removeDeviceButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>320</x>
-         <y>200</y>
-         <width>141</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="text">
-        <string>Remove Device</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="createFirmwareVersionGroup">
-      <property name="geometry">
-       <rect>
-        <x>240</x>
-        <y>10</y>
-        <width>151</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Firmware Version</string>
-      </property>
-      <widget class="QLineEdit" name="createFirmwareVersionLineEdit">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>131</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="readOnly">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="createPlatformNameGroup">
-      <property name="geometry">
-       <rect>
-        <x>430</x>
-        <y>10</y>
-        <width>171</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Platform Name</string>
-      </property>
-      <widget class="QLineEdit" name="createPlatformNameLineEdit">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>151</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="readOnly">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="createFirmwareNameGroup">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>221</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Firmware Name</string>
-      </property>
-      <widget class="QLineEdit" name="createFirmwareNameLineEdit">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>201</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="readOnly">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="createDevelopersGroup">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>80</y>
-        <width>751</width>
-        <height>141</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Developers</string>
-      </property>
-      <widget class="QListWidget" name="createDevelopersListWidget">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>560</x>
-         <y>20</y>
-         <width>181</width>
-         <height>81</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QGroupBox" name="createDeveloperInfoGroup">
-       <property name="geometry">
-        <rect>
-         <x>310</x>
-         <y>20</y>
-         <width>241</width>
-         <height>101</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Developer Info</string>
-       </property>
-       <widget class="QLabel" name="createDeveloperNameLabel">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>30</y>
-          <width>51</width>
-          <height>16</height>
-         </rect>
+     <layout class="QVBoxLayout" name="createPackageMainLayout">
+      <item>
+       <layout class="QHBoxLayout" name="createPackageTopLayout">
+        <item>
+         <widget class="QGroupBox" name="createFirmwareNameGroup">
+          <property name="title">
+           <string>Firmware Name</string>
+          </property>
+          <layout class="QVBoxLayout" name="createFirmwareNameLayout">
+           <item>
+            <widget class="QLineEdit" name="createFirmwareNameLineEdit">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="readOnly">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="createFirmwareVersionGroup">
+          <property name="title">
+           <string>Firmware Version</string>
+          </property>
+          <layout class="QVBoxLayout" name="createFirmwareVersionLayout">
+           <item>
+            <widget class="QLineEdit" name="createFirmwareVersionLineEdit">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="readOnly">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="createPlatformNameGroup">
+          <property name="title">
+           <string>Platform Name</string>
+          </property>
+          <layout class="QVBoxLayout" name="createPlatformNameLayout">
+           <item>
+            <widget class="QLineEdit" name="createPlatformNameLineEdit">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="readOnly">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="createPlatformVersionGroup">
+          <property name="title">
+           <string>Platform Version</string>
+          </property>
+          <layout class="QVBoxLayout" name="createPlatformVersionLayout">
+           <item>
+            <widget class="QLineEdit" name="createPlatformVersionLineEdit">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="readOnly">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="createDevelopersGroup">
+        <property name="title">
+         <string>Developers</string>
         </property>
-        <property name="text">
-         <string>Name</string>
-        </property>
+        <layout class="QHBoxLayout" name="createDevelopersMainLayout">
+         <item>
+          <widget class="QGroupBox" name="createUrlsGroup">
+           <property name="title">
+            <string>URLs (Optional)</string>
+           </property>
+           <layout class="QVBoxLayout" name="createUrlsLayout">
+            <item>
+             <layout class="QHBoxLayout" name="createHomepageLayout">
+              <item>
+               <widget class="QLabel" name="createHomepageLabel">
+                <property name="text">
+                 <string>Homepage</string>
+                </property>
+                <property name="maximumWidth">
+                 <number>80</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="createHomepageLineEdit">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="createDonateLayout">
+              <item>
+               <widget class="QLabel" name="createDonateLabel">
+                <property name="text">
+                 <string>Donate</string>
+                </property>
+                <property name="maximumWidth">
+                 <number>80</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="createDonateLineEdit">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="createDeveloperInfoGroup">
+           <property name="title">
+            <string>Developer Info</string>
+           </property>
+           <layout class="QVBoxLayout" name="createDeveloperInfoLayout">
+            <item>
+             <layout class="QHBoxLayout" name="createDeveloperNameLayout">
+              <item>
+               <widget class="QLabel" name="createDeveloperNameLabel">
+                <property name="text">
+                 <string>Name</string>
+                </property>
+                <property name="maximumWidth">
+                 <number>50</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="createDeveloperNameLineEdit">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QPushButton" name="addDeveloperButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>Add</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="createDevelopersListLayout">
+           <item>
+            <widget class="QListWidget" name="createDevelopersListWidget">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="maximumWidth">
+              <number>200</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="removeDeveloperButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="text">
+              <string>Remove</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </widget>
-       <widget class="QLineEdit" name="createDeveloperNameLineEdit">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>70</x>
-          <y>30</y>
-          <width>161</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="readOnly">
-         <bool>false</bool>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="addDeveloperButton">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>130</x>
-          <y>60</y>
-          <width>101</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="text">
-         <string>Add</string>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QPushButton" name="removeDeveloperButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>640</x>
-         <y>110</y>
-         <width>101</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="text">
-        <string>Remove</string>
-       </property>
-      </widget>
-      <widget class="QGroupBox" name="createUrlsGroup">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>291</width>
-         <height>101</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>URLs (Optional)</string>
-       </property>
-       <widget class="QLabel" name="createDonateLabel">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>60</y>
-          <width>81</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Donate</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="createHomepageLabel">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>30</y>
-          <width>81</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Homepage</string>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="createHomepageLineEdit">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>100</x>
-          <y>30</y>
-          <width>181</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="readOnly">
-         <bool>false</bool>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="createDonateLineEdit">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>100</x>
-          <y>60</y>
-          <width>181</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="readOnly">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="createPlatformVersionGroup">
-      <property name="geometry">
-       <rect>
-        <x>610</x>
-        <y>10</y>
-        <width>151</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Platform Version</string>
-      </property>
-      <widget class="QLineEdit" name="createPlatformVersionLineEdit">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>131</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="readOnly">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="createDeviceInfoGroup">
-      <property name="geometry">
-       <rect>
-        <x>480</x>
-        <y>240</y>
-        <width>291</width>
-        <height>151</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Device Info</string>
-      </property>
-      <widget class="QLabel" name="deviceNameLabel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>60</y>
-         <width>111</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Name</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="deviceNameLineEdit">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>60</y>
-         <width>151</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="readOnly">
-        <bool>false</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="deviceManufacturerLabel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>111</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Manufacturer</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="deviceManufacturerLineEdit">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>30</y>
-         <width>151</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="readOnly">
-        <bool>false</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="productCodeLabel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>90</y>
-         <width>111</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Product Code</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="deviceProductCodeLineEdit">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>90</y>
-         <width>151</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="readOnly">
-        <bool>false</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="addDeviceButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>160</x>
-         <y>120</y>
-         <width>121</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="text">
-        <string>Add Device</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QPushButton" name="buildPackageButton">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>580</x>
-        <y>420</y>
-        <width>121</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-      <property name="text">
-       <string>Build</string>
-      </property>
-     </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="createPackageBottomLayout">
+        <item>
+         <widget class="QGroupBox" name="createSupportedDevicesGroup">
+          <property name="title">
+           <string>Supported Devices</string>
+          </property>
+          <layout class="QVBoxLayout" name="createSupportedDevicesLayout">
+           <item>
+            <widget class="QListWidget" name="createDevicesListWidget"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="removeDeviceButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="text">
+              <string>Remove Device</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="createDeviceRightLayout">
+          <item>
+           <widget class="QGroupBox" name="createDeviceInfoGroup">
+            <property name="title">
+             <string>Device Info</string>
+            </property>
+            <property name="maximumWidth">
+             <number>320</number>
+            </property>
+            <layout class="QVBoxLayout" name="createDeviceInfoLayout">
+             <item>
+              <layout class="QHBoxLayout" name="createDeviceManufacturerLayout">
+               <item>
+                <widget class="QLabel" name="deviceManufacturerLabel">
+                 <property name="text">
+                  <string>Manufacturer</string>
+                 </property>
+                 <property name="maximumWidth">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="deviceManufacturerLineEdit">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="readOnly">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="createDeviceNameLayout">
+               <item>
+                <widget class="QLabel" name="deviceNameLabel">
+                 <property name="text">
+                  <string>Name</string>
+                 </property>
+                 <property name="maximumWidth">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="deviceNameLineEdit">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="readOnly">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="createDeviceProductCodeLayout">
+               <item>
+                <widget class="QLabel" name="productCodeLabel">
+                 <property name="text">
+                  <string>Product Code</string>
+                 </property>
+                 <property name="maximumWidth">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="deviceProductCodeLineEdit">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="readOnly">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="addDeviceButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="text">
+                <string>Add Device</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer name="createPackageSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="buildPackageButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="text">
+             <string>Build</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
     <widget class="QWidget" name="tab">
      <attribute name="title">
       <string>Utilities</string>
      </attribute>
-     <widget class="QGroupBox" name="downloadPitGroup">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>80</y>
-        <width>461</width>
-        <height>141</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Download PIT</string>
-      </property>
-      <widget class="QGroupBox" name="pitDestinationGroup">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>441</width>
-         <height>71</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Destination File</string>
-       </property>
-       <widget class="QLineEdit" name="pitDestinationLineEdit">
-        <property name="enabled">
-         <bool>false</bool>
+     <layout class="QVBoxLayout" name="utilitiesMainLayout">
+      <item>
+       <layout class="QHBoxLayout" name="utilitiesTopLayout">
+        <item>
+         <layout class="QVBoxLayout" name="utilitiesLeftLayout">
+          <item>
+           <widget class="QGroupBox" name="detectDeviceGroup">
+            <property name="title">
+             <string>Detect Device</string>
+            </property>
+            <layout class="QHBoxLayout" name="detectDeviceLayout">
+             <item>
+              <widget class="QRadioButton" name="deviceDetectedRadioButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Device Detected</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="detectDeviceButton">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="toolTip">
+                <string/>
+               </property>
+               <property name="text">
+                <string>Detect</string>
+               </property>
+               <property name="maximumWidth">
+                <number>80</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="detectDeviceTipLabel">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="toolTip">
+                <string notr="true">Detect whether or not a device is connected in download mode.</string>
+               </property>
+               <property name="statusTip">
+                <string notr="true"/>
+               </property>
+               <property name="whatsThis">
+                <string notr="true"/>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::Panel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <property name="lineWidth">
+                <number>2</number>
+               </property>
+               <property name="midLineWidth">
+                <number>0</number>
+               </property>
+               <property name="text">
+                <string>?</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>25</width>
+                 <height>25</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="closePcScreenGroup">
+            <property name="title">
+             <string>Close PC Screen</string>
+            </property>
+            <layout class="QHBoxLayout" name="closePcScreenLayout">
+             <item>
+              <widget class="QPushButton" name="closePcScreenButton">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="text">
+                <string>Close</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="closePcScreenTipLabel">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="toolTip">
+                <string notr="true">Close the &quot;device &lt;--&gt; PC&quot; screen displayed on a device.</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::Panel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <property name="lineWidth">
+                <number>2</number>
+               </property>
+               <property name="midLineWidth">
+                <number>0</number>
+               </property>
+               <property name="text">
+                <string>?</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>25</width>
+                 <height>25</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="downloadPitGroup">
+            <property name="title">
+             <string>Download PIT</string>
+            </property>
+            <layout class="QVBoxLayout" name="downloadPitMainLayout">
+             <item>
+              <widget class="QGroupBox" name="pitDestinationGroup">
+               <property name="title">
+                <string>Destination File</string>
+               </property>
+               <layout class="QHBoxLayout" name="pitDestinationLayout">
+                <item>
+                 <widget class="QLineEdit" name="pitDestinationLineEdit">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pitSaveAsButton">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
+                  <property name="text">
+                   <string>Save As...</string>
+                  </property>
+                  <property name="maximumWidth">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="downloadPitButtonLayout">
+               <item>
+                <spacer name="downloadPitSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="downloadPitButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
+                 <property name="text">
+                  <string>Download</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="downloadPitTipLabel">
+                 <property name="font">
+                  <font>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="toolTip">
+                  <string notr="true">Download and save a device's PIT file.</string>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::Panel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <property name="lineWidth">
+                  <number>2</number>
+                 </property>
+                 <property name="midLineWidth">
+                  <number>0</number>
+                 </property>
+                 <property name="text">
+                  <string>?</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>25</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="printPitGroup">
+          <property name="title">
+           <string>Print PIT</string>
+          </property>
+          <property name="maximumWidth">
+           <number>320</number>
+          </property>
+          <layout class="QVBoxLayout" name="printPitMainLayout">
+           <item>
+            <widget class="QRadioButton" name="printPitDeviceRadioBox">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string>Device</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="printPitLocalFileRadioBox">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string>Local File</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="printLocalPitGroup">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="title">
+              <string>PIT File</string>
+             </property>
+             <layout class="QHBoxLayout" name="printLocalPitLayout">
+              <item>
+               <widget class="QLineEdit" name="printLocalPitLineEdit">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="printLocalPitBrowseButton">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="text">
+                 <string>Browse</string>
+                </property>
+                <property name="maximumWidth">
+                 <number>80</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer name="printPitSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="printPitButtonLayout">
+             <item>
+              <widget class="QPushButton" name="printPitButton">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="text">
+                <string>Print</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="printPitTipLabel">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="toolTip">
+                <string notr="true">Print the contents of a PIT file in a human readable fashion.</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::Panel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <property name="lineWidth">
+                <number>2</number>
+               </property>
+               <property name="midLineWidth">
+                <number>0</number>
+               </property>
+               <property name="text">
+                <string>?</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>25</width>
+                 <height>25</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="outputGroup">
+        <property name="title">
+         <string>Output</string>
         </property>
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>30</y>
-          <width>311</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
+        <layout class="QVBoxLayout" name="outputLayout">
+         <item>
+          <widget class="QPlainTextEdit" name="utilityOutputPlainTextEdit">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="undoRedoEnabled">
+            <bool>false</bool>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="plainText">
+            <string notr="true"/>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
-       <widget class="QPushButton" name="pitSaveAsButton">
-        <property name="enabled">
-         <bool>true</bool>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="adbCommandsTab">
+     <attribute name="title">
+      <string>ADB Commands</string>
+     </attribute>
+     <layout class="QVBoxLayout" name="adbMainLayout">
+      <property name="spacing">
+       <number>10</number>
+      </property>
+      <property name="leftMargin">
+       <number>10</number>
+      </property>
+      <property name="topMargin">
+       <number>10</number>
+      </property>
+      <property name="rightMargin">
+       <number>10</number>
+      </property>
+      <property name="bottomMargin">
+       <number>10</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="adbTopLayout">
+        <item>
+         <widget class="QGroupBox" name="deviceControlGroup">
+          <property name="title">
+           <string>Device Control</string>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>350</width>
+            <height>200</height>
+           </size>
+          </property>
+          <layout class="QGridLayout" name="deviceControlLayout">
+           <item row="0" column="0">
+            <widget class="QPushButton" name="rebootRecoveryButton">
+             <property name="text">
+              <string>Reboot to Recovery</string>
+             </property>
+             <property name="minimumHeight">
+              <number>30</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QPushButton" name="rebootDownloadButton">
+             <property name="text">
+              <string>Reboot to Download</string>
+             </property>
+             <property name="minimumHeight">
+              <number>30</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QPushButton" name="rebootFastbootButton">
+             <property name="text">
+              <string>Reboot to Fastboot</string>
+             </property>
+             <property name="minimumHeight">
+              <number>30</number>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QPushButton" name="shutdownButton">
+             <property name="text">
+              <string>Shutdown Device</string>
+             </property>
+             <property name="minimumHeight">
+              <number>30</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" rowspan="4">
+            <widget class="QLabel" name="adbStatusLabel">
+             <property name="text">
+              <string>ADB Status: Unknown</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="adbCommandGroup">
+          <property name="title">
+           <string>ADB Commands</string>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>380</width>
+            <height>200</height>
+           </size>
+          </property>
+          <layout class="QVBoxLayout" name="adbCommandLayout">
+           <item>
+            <layout class="QHBoxLayout" name="adbQuickButtonsLayout">
+             <item>
+              <widget class="QPushButton" name="adbDevicesButton">
+               <property name="text">
+                <string>List Devices</string>
+               </property>
+               <property name="minimumHeight">
+                <number>25</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="adbShellLsButton">
+               <property name="text">
+                <string>Shell ls</string>
+               </property>
+               <property name="minimumHeight">
+                <number>25</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="adbLogcatButton">
+               <property name="text">
+                <string>Logcat</string>
+               </property>
+               <property name="minimumHeight">
+                <number>25</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="adbInstallButton">
+               <property name="text">
+                <string>Install APK</string>
+               </property>
+               <property name="minimumHeight">
+                <number>25</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="clearAdbOutputButton">
+               <property name="text">
+                <string>Clear</string>
+               </property>
+               <property name="minimumHeight">
+                <number>25</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="adbCustomCommandLayout">
+             <item>
+              <widget class="QLineEdit" name="customAdbCommandLineEdit">
+               <property name="placeholderText">
+                <string>shell ls -la / (examples: devices, shell ps, install app.apk)</string>
+               </property>
+               <property name="minimumHeight">
+                <number>25</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="executeAdbCommandButton">
+               <property name="text">
+                <string>Execute</string>
+               </property>
+               <property name="minimumHeight">
+                <number>25</number>
+               </property>
+               <property name="minimumWidth">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QTextEdit" name="adbOutputTextEdit">
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="placeholderText">
+              <string>ADB command output will appear here...</string>
+             </property>
+             <property name="font">
+              <font>
+               <family>monospace</family>
+              </font>
+             </property>
+             <property name="minimumHeight">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="deviceInfoGroup">
+        <property name="title">
+         <string>Device Information</string>
         </property>
-        <property name="geometry">
-         <rect>
-          <x>340</x>
-          <y>30</y>
-          <width>91</width>
-          <height>23</height>
-         </rect>
+        <property name="minimumHeight">
+         <number>200</number>
         </property>
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="text">
-         <string>Save As...</string>
-        </property>
+        <layout class="QVBoxLayout" name="deviceInfoLayout">
+         <item>
+          <widget class="QPushButton" name="refreshDeviceInfoButton">
+           <property name="text">
+            <string>Refresh Info</string>
+           </property>
+           <property name="minimumHeight">
+            <number>30</number>
+           </property>
+           <property name="maximumWidth">
+            <number>120</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTextEdit" name="deviceInfoTextEdit">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="placeholderText">
+            <string>Device information will appear here...</string>
+           </property>
+           <property name="minimumHeight">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
-      </widget>
-      <widget class="QPushButton" name="downloadPitButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>320</x>
-         <y>110</y>
-         <width>101</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="text">
-        <string>Download</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="downloadPitTipLabel">
-       <property name="geometry">
-        <rect>
-         <x>430</x>
-         <y>110</y>
-         <width>21</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string notr="true">Download and save a device's PIT file.</string>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Panel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <property name="lineWidth">
-        <number>2</number>
-       </property>
-       <property name="midLineWidth">
-        <number>0</number>
-       </property>
-       <property name="text">
-        <string>?</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="outputGroup">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>230</y>
-        <width>751</width>
-        <height>241</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Output</string>
-      </property>
-      <widget class="QPlainTextEdit" name="utilityOutputPlainTextEdit">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>731</width>
-         <height>201</height>
-        </rect>
-       </property>
-       <property name="undoRedoEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-       <property name="plainText">
-        <string notr="true"/>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="detectDeviceGroup">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>291</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Detect Device</string>
-      </property>
-      <widget class="QPushButton" name="detectDeviceButton">
-       <property name="geometry">
-        <rect>
-         <x>170</x>
-         <y>30</y>
-         <width>81</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="toolTip">
-        <string/>
-       </property>
-       <property name="text">
-        <string>Detect</string>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="deviceDetectedRadioButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>151</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Device Detected</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="detectDeviceTipLabel">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>260</x>
-         <y>30</y>
-         <width>21</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string notr="true">Detect whether or not a device is connected in download mode.</string>
-       </property>
-       <property name="statusTip">
-        <string notr="true"/>
-       </property>
-       <property name="whatsThis">
-        <string notr="true"/>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Panel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <property name="lineWidth">
-        <number>2</number>
-       </property>
-       <property name="midLineWidth">
-        <number>0</number>
-       </property>
-       <property name="text">
-        <string>?</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="printPitGroup">
-      <property name="geometry">
-       <rect>
-        <x>480</x>
-        <y>10</y>
-        <width>291</width>
-        <height>211</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Print PIT</string>
-      </property>
-      <widget class="QPushButton" name="printPitButton">
-       <property name="geometry">
-        <rect>
-         <x>160</x>
-         <y>180</y>
-         <width>81</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="text">
-        <string>Print</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="printPitTipLabel">
-       <property name="geometry">
-        <rect>
-         <x>250</x>
-         <y>180</y>
-         <width>21</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string notr="true">Print the contents of a PIT file in a human readable fashion.</string>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Panel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <property name="lineWidth">
-        <number>2</number>
-       </property>
-       <property name="midLineWidth">
-        <number>0</number>
-       </property>
-       <property name="text">
-        <string>?</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="printPitDeviceRadioBox">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>30</y>
-         <width>261</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Device</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="printPitLocalFileRadioBox">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>60</y>
-         <width>261</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Local File</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QGroupBox" name="printLocalPitGroup">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>100</y>
-         <width>271</width>
-         <height>71</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>PIT File</string>
-       </property>
-       <widget class="QLineEdit" name="printLocalPitLineEdit">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>30</y>
-          <width>171</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="printLocalPitBrowseButton">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>190</x>
-          <y>30</y>
-          <width>71</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="text">
-         <string>Browse</string>
-        </property>
-       </widget>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="closePcScreenGroup">
-      <property name="geometry">
-       <rect>
-        <x>310</x>
-        <y>10</y>
-        <width>161</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Close PC Screen</string>
-      </property>
-      <widget class="QPushButton" name="closePcScreenButton">
-       <property name="geometry">
-        <rect>
-         <x>40</x>
-         <y>30</y>
-         <width>81</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="text">
-        <string>Close</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="closePcScreenTipLabel">
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>30</y>
-         <width>21</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string notr="true">Close the &quot;device &lt;--&gt; PC&quot; screen displayed on a device.</string>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Panel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <property name="lineWidth">
-        <number>2</number>
-       </property>
-       <property name="midLineWidth">
-        <number>0</number>
-       </property>
-       <property name="text">
-        <string>?</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </widget>
+      </item>
+     </layout>
     </widget>
    </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>788</width>
+     <width>900</width>
      <height>22</height>
     </rect>
    </property>
