@@ -26,6 +26,8 @@
 #include <QMainWindow>
 #include <QProcess>
 #include <QTemporaryFile>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 
 // libpit
 #include "libpit.h"
@@ -106,6 +108,14 @@ namespace HeimdallFrontend
 			bool verboseOutput;
 			bool resume;
 			int currentTheme; // 0: System, 1: Light, 2: Dark
+
+			// Download Packages
+			QNetworkAccessManager *packageNet = nullptr;
+			QNetworkReply *activeManifestReply = nullptr;
+			QNetworkReply *activeDownloadReply = nullptr;
+			QString detectedProduct; // e.g., beyond1lte
+			QString downloadsDir;
+			QString providerTemplate; // e.g., https://example.com/heimdall/{product}.json
 
 
 			void StartHeimdall(const QStringList& arguments);
@@ -195,6 +205,9 @@ namespace HeimdallFrontend
 			
 			void BuildPackage(void);
 
+			// Quick Samsung converter
+			void ConvertSamsungQuick(void);
+
 			// Utilities Tab
 			void DetectDevice(void);
 			void ClosePcScreen(void);
@@ -218,10 +231,23 @@ namespace HeimdallFrontend
 			void ListAdbDevices(void);
 			void AdbShellLs(void);
 			void AdbLogcat(void);
-			void InstallApk(void);
-			void ClearAdbOutput(void);
+		void CheckRoot(void);
+		void InstallApk(void);
+		void ClearAdbOutput(void);
 
-			// Heimdall Command Line
+			// Download Packages Tab
+			void DetectDeviceForPackages(void);
+			void RefreshAvailablePackages(void);
+			void HandlePackageManifestFinished();
+			void DownloadSelectedPackage(void);
+			void HandlePackageDownloadProgress(qint64 received, qint64 total);
+			void HandlePackageDownloadFinished();
+			void OpenPackagesFolder(void);
+
+		// TEE Analysis Tab
+		void AnalyzeTEE(void);
+		
+		// Heimdall Command Line
 			void HandleHeimdallStdout(void);
 			void HandleHeimdallReturned(int exitCode, QProcess::ExitStatus exitStatus);
 			void HandleHeimdallError(QProcess::ProcessError error);

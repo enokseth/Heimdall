@@ -16,8 +16,8 @@
     <verstretch>1</verstretch>
    </sizepolicy>
   </property>
-  <property name="minimumSize">
-   <size>
+    <property name="minimumSize">
+     <size>
     <width>800</width>
     <height>600</height>
    </size>
@@ -127,10 +127,10 @@ QTabBar::tab:hover:!selected {
      <attribute name="title">
       <string>Load Package</string>
      </attribute>
-     <layout class="QHBoxLayout" name="loadPackageHorizontalLayout">
-      <property name="spacing">
-       <number>15</number>
-      </property>
+      <layout class="QHBoxLayout" name="loadPackageHorizontalLayout">
+        <property name="spacing">
+         <number>15</number>
+        </property>
       <item>
        <layout class="QVBoxLayout" name="loadPackageLeftLayout">
         <property name="spacing">
@@ -319,13 +319,38 @@ QTabBar::tab:hover:!selected {
           </layout>
          </widget>
         </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="loadPackageRightLayout">
+    </layout>
+    </item>
+        <item>
+         <widget class="QWidget" name="loadPackageRightContainer">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumWidth">
+             <number>260</number>
+            </property>
+            <property name="maximumWidth">
+             <number>300</number>
+            </property>
+            <layout class="QVBoxLayout" name="loadPackageRightLayout">
         <property name="spacing">
          <number>10</number>
         </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
         <item>
          <widget class="QGroupBox" name="includedFilesGroup">
           <property name="title">
@@ -341,9 +366,9 @@ QTabBar::tab:hover:!selected {
            <number>330</number>
           </property>
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
-            <verstretch>1</verstretch>
+            <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <layout class="QVBoxLayout" name="includedFilesLayout">
@@ -352,7 +377,6 @@ QTabBar::tab:hover:!selected {
            </item>
           </layout>
          </widget>
-         
         </item>
         <item>
          <widget class="QRadioButton" name="repartitionRadioButton">
@@ -403,7 +427,8 @@ QTabBar::tab:hover:!selected {
           </property>
          </widget>
         </item>
-       </layout>
+            </layout>
+         </widget>
       </item>
      </layout>
     </widget>
@@ -729,8 +754,14 @@ QTabBar::tab:hover:!selected {
              <property name="plainText">
               <string notr="true"/>
              </property>
-             <property name="maximumHeight">
-              <number>100</number>
+             <property name="minimumHeight">
+              <number>220</number>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>1</verstretch>
+              </sizepolicy>
              </property>
             </widget>
            </item>
@@ -1255,6 +1286,22 @@ QTabBar::tab:hover:!selected {
             </property>
            </widget>
           </item>
+                    <item>
+                     <widget class="QPushButton" name="converterQuickButton">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
+                        <property name="focusPolicy">
+                         <enum>Qt::NoFocus</enum>
+                        </property>
+                        <property name="text">
+                         <string>Convert Samsung…</string>
+                        </property>
+                        <property name="toolTip">
+                         <string>Compose a Heimdall package from Samsung firmware files using a PIT</string>
+                        </property>
+                     </widget>
+                    </item>
          </layout>
         </item>
        </layout>
@@ -1697,7 +1744,7 @@ QTabBar::tab:hover:!selected {
     </widget>
     <widget class="QWidget" name="adbCommandsTab">
      <attribute name="title">
-      <string>ADB Commands</string>
+      <string>ADB Utilities</string>
      </attribute>
      <layout class="QVBoxLayout" name="adbMainLayout">
       <property name="spacing">
@@ -1788,7 +1835,7 @@ QTabBar::tab:hover:!selected {
         <item>
          <widget class="QGroupBox" name="adbCommandGroup">
           <property name="title">
-           <string>ADB Commands</string>
+           <string>ADB Utilities</string>
           </property>
           <property name="minimumSize">
            <size>
@@ -1806,6 +1853,19 @@ QTabBar::tab:hover:!selected {
                </property>
                <property name="minimumHeight">
                 <number>25</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="checkRootButton">
+               <property name="text">
+                <string>🔐 Check Root</string>
+               </property>
+               <property name="minimumHeight">
+                <number>25</number>
+               </property>
+               <property name="toolTip">
+                <string>Check if device has root access</string>
                </property>
               </widget>
              </item>
@@ -1884,15 +1944,37 @@ QTabBar::tab:hover:!selected {
               <bool>true</bool>
              </property>
              <property name="placeholderText">
-              <string>ADB command output will appear here...</string>
+              <string>ADB command output will appear here...
+
+Commands will be shown in blue with timestamps
+Output in green for success, red for errors
+Separators for better readability</string>
              </property>
              <property name="font">
               <font>
                <family>monospace</family>
+               <pointsize>10</pointsize>
               </font>
              </property>
+             <property name="styleSheet">
+              <string>QTextEdit {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: 2px solid #4A90E2;
+    border-radius: 6px;
+    padding: 8px;
+    selection-background-color: #4A90E2;
+    selection-color: white;
+}
+QTextEdit:focus {
+    border-color: #357ABD;
+}</string>
+             </property>
              <property name="minimumHeight">
-              <number>100</number>
+              <number>150</number>
+             </property>
+             <property name="maximumHeight">
+              <number>300</number>
              </property>
             </widget>
            </item>
@@ -1933,6 +2015,176 @@ QTabBar::tab:hover:!selected {
            </property>
            <property name="minimumHeight">
             <number>150</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="downloadPackagesTab">
+     <attribute name="title">
+      <string>Download Packages</string>
+     </attribute>
+     <layout class="QVBoxLayout" name="dlMainLayout">
+      <property name="spacing">
+       <number>8</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="dlTopRow">
+        <item>
+         <widget class="QLineEdit" name="providerUrlLineEdit">
+          <property name="placeholderText">
+           <string>Provider URL (e.g. https://example.com/heimdall/{product}.json)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="detectDeviceForPackagesButton">
+          <property name="text">
+           <string>Detect Device</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="refreshPackagesButton">
+          <property name="text">
+           <string>Refresh</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="deviceSummaryLabel">
+        <property name="text">
+         <string>Device: Unknown</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTableWidget" name="packagesTable">
+        <column>
+         <property name="text">
+          <string>Version</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Build</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Date</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Region</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Size</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="dlButtonsRow">
+        <item>
+         <widget class="QPushButton" name="downloadSelectedPackageButton">
+          <property name="text">
+           <string>Download Selected</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="openPackagesFolderButton">
+          <property name="text">
+           <string>Open Downloads Folder</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="dlButtonsSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="dlStatusLabel">
+          <property name="text">
+           <string>Status: Idle</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="teeAnalysisTab">
+     <attribute name="title">
+      <string>TEE Analysis</string>
+     </attribute>
+     <layout class="QVBoxLayout" name="teeMainLayout">
+      <property name="spacing">
+       <number>10</number>
+      </property>
+      <item>
+       <widget class="QGroupBox" name="teeControlGroup">
+        <property name="title">
+         <string>Analyzer</string>
+        </property>
+        <layout class="QHBoxLayout" name="teeControlLayout">
+         <item>
+          <widget class="QPushButton" name="teeAnalyzeButton">
+           <property name="text">
+            <string>Analyze TEE</string>
+           </property>
+           <property name="minimumHeight">
+            <number>30</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="teeTypeLabel">
+           <property name="text">
+            <string>TEE: Unknown</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="teeOutputGroup">
+        <property name="title">
+         <string>Details</string>
+        </property>
+        <layout class="QVBoxLayout" name="teeOutputLayout">
+         <item>
+          <widget class="QTextEdit" name="teeOutputTextEdit">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="placeholderText">
+            <string>Click "Analyze TEE" to scan the device and classify the Trusted Execution Environment implementation.</string>
+           </property>
+           <property name="minimumHeight">
+            <number>220</number>
            </property>
           </widget>
          </item>

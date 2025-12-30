@@ -26,11 +26,22 @@
 #include <QProcess>
 #include <QRegExp>
 #include <QUrl>
+#include <QDesktopServices>
+#include <QStandardPaths>
+#include <QFile>
+#include <QFileInfo>
+#include <QDir>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QDateTime>
 
 // Heimdall Frontend
 #include "Alerts.h"
 #include "mainwindow.h"
 #include "Packaging.h"
+#include "AdbCommands.h"
+#include "TEEAnalyzer.h"
 
 #define UNUSED(x) (void)(x)
 
@@ -41,6 +52,17 @@ void MainWindow::StartHeimdall(const QStringList& arguments)
 	UpdateInterfaceAvailability();
 
 	heimdallProcess.setReadChannel(QProcess::StandardOutput);
+
+	// Echo the exact command we're about to run to help debugging
+	QString cmdPreview = "heimdall " + arguments.join(' ');
+	if (!!(heimdallState & HeimdallState::Flashing))
+	{
+		outputPlainTextEdit->appendPlainText("Executing: " + cmdPreview + "\n");
+	}
+	else
+	{
+		utilityOutputPlainTextEdit->appendPlainText("Executing: " + cmdPreview + "\n");
+	}
 	
 	heimdallProcess.start("heimdall", arguments);
 	heimdallProcess.waitForStarted(3000);
@@ -247,6 +269,12 @@ void MainWindow::UpdateFlashInterfaceAvailability(void)
 		bool allPartitionsValid = true;
 		QList<FileInfo>& fileList = workingPackageData.GetFirmwareInfo().GetFileInfos();
 
+		// Clarify repartition behavior for single vs multi-part flashes
+		if (fileList.length() == 1)
+			repartitionCheckBox->setToolTip("Repartition is skipped when flashing a single partition.");
+		else
+			repartitionCheckBox->setToolTip("Repartitioning will wipe all data for your phone and install the selected PIT file.");
+
 		for (int i = 0; i < fileList.length(); i++)
 		{
 			if (fileList[i].GetFilename().isEmpty())
@@ -407,7 +435,7 @@ void MainWindow::UpdatePartitionNamesInterface(void)
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    setupUi(this);
+	setupUi(this);
 
 	heimdallState = HeimdallState::Stopped;
 
@@ -474,6 +502,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 	QObject::connect(removeDeviceButton, SIGNAL(clicked()), this, SLOT(RemoveDevice()));
 			
 	QObject::connect(buildPackageButton, SIGNAL(clicked()), this, SLOT(BuildPackage()));
+	QObject::connect(converterQuickButton, SIGNAL(clicked()), this, SLOT(ConvertSamsungQuick()));
 
 	// Utilities Tab
 	QObject::connect(detectDeviceButton, SIGNAL(clicked()), this, SLOT(DetectDevice()));
@@ -497,10 +526,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 	QObject::connect(refreshDeviceInfoButton, SIGNAL(clicked()), this, SLOT(RefreshDeviceInfo()));
 	QObject::connect(customAdbCommandLineEdit, SIGNAL(textChanged(const QString&)), this, SLOT(UpdateAdbInterface()));
 	QObject::connect(adbDevicesButton, SIGNAL(clicked()), this, SLOT(ListAdbDevices()));
+	QObject::connect(checkRootButton, SIGNAL(clicked()), this, SLOT(CheckRoot()));
 	QObject::connect(adbShellLsButton, SIGNAL(clicked()), this, SLOT(AdbShellLs()));
 	QObject::connect(adbLogcatButton, SIGNAL(clicked()), this, SLOT(AdbLogcat()));
 	QObject::connect(adbInstallButton, SIGNAL(clicked()), this, SLOT(InstallApk()));
 	QObject::connect(clearAdbOutputButton, SIGNAL(clicked()), this, SLOT(ClearAdbOutput()));
+
+	// TEE Analysis Tab
+	QObject::connect(teeAnalyzeButton, SIGNAL(clicked()), this, SLOT(AnalyzeTEE()));
 
 	// Theme System - Connect menu actions
 	QObject::connect(actionFollowSystem, SIGNAL(triggered()), this, SLOT(FollowSystemTheme()));
@@ -517,12 +550,198 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 	QObject::connect(&adbProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(HandleAdbReturned(int, QProcess::ExitStatus)));
 	QObject::connect(&adbProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(HandleAdbError(QProcess::ProcessError)));
 
+	// Download Packages - init
+	packageNet = new QNetworkAccessManager(this);
+	downloadsDir = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/Heimdall";
+	QDir().mkpath(downloadsDir);
+	providerTemplate = "https://example.com/heimdall/{product}.json";
+	providerUrlLineEdit->setText(providerTemplate);
+	packagesTable->setColumnCount(5);
+	QStringList hdr; hdr << "Version" << "Build" << "Date" << "Region" << "Size"; packagesTable->setHorizontalHeaderLabels(hdr);
+	QObject::connect(refreshPackagesButton, SIGNAL(clicked()), this, SLOT(RefreshAvailablePackages()));
+	QObject::connect(detectDeviceForPackagesButton, SIGNAL(clicked()), this, SLOT(DetectDeviceForPackages()));
+	QObject::connect(downloadSelectedPackageButton, SIGNAL(clicked()), this, SLOT(DownloadSelectedPackage()));
+	QObject::connect(openPackagesFolderButton, SIGNAL(clicked()), this, SLOT(OpenPackagesFolder()));
+
 	// Initialize theme system
 	currentTheme = 0; // Default to system theme
 	ApplyTheme(currentTheme);
 	
 	// Make interface responsive by connecting to resize events
 	this->installEventFilter(this);
+}
+// Download Packages Implementation
+
+void MainWindow::DetectDeviceForPackages(void)
+{
+	// Query adb props quickly
+	QProcess p;
+	p.start(HeimdallFrontend::Adb::adbExecutable(), HeimdallFrontend::Adb::argsCustom("shell getprop ro.product.device ro.product.model"));
+	if (!p.waitForFinished(5000)) {
+		dlStatusLabel->setText("Status: ADB timeout");
+		return;
+	}
+	QString out = QString::fromUtf8(p.readAllStandardOutput()).trimmed();
+	QStringList lines = out.split('\n', Qt::SkipEmptyParts);
+	QString product;
+	QString model;
+	for (const QString &line : lines) {
+		if (line.contains("ro.product.device")) product = line.section(']', 1).trimmed();
+		if (line.contains("ro.product.model")) model = line.section(']', 1).trimmed();
+	}
+	if (product.isEmpty() && !lines.isEmpty()) {
+		product = lines.first().trimmed();
+	}
+	detectedProduct = product.isEmpty() ? QString("unknown") : product;
+	deviceSummaryLabel->setText(QString("Device: %1 (%2)").arg(model.isEmpty()?"?":model, detectedProduct));
+}
+
+void MainWindow::RefreshAvailablePackages(void)
+{
+	packagesTable->setRowCount(0);
+	QString urlTmpl = providerUrlLineEdit->text().trimmed();
+	if (urlTmpl.isEmpty()) urlTmpl = providerTemplate;
+	QString url = urlTmpl;
+	url.replace("{product}", detectedProduct.isEmpty()?QString("unknown"):detectedProduct);
+	dlStatusLabel->setText("Status: Fetching manifest...");
+	QNetworkRequest req{QUrl(url)};
+	req.setHeader(QNetworkRequest::UserAgentHeader, "Heimdall-Frontend");
+	if (activeManifestReply) { activeManifestReply->abort(); activeManifestReply->deleteLater(); }
+	activeManifestReply = packageNet->get(req);
+	QObject::connect(activeManifestReply, &QNetworkReply::finished, this, &MainWindow::HandlePackageManifestFinished);
+}
+
+void MainWindow::HandlePackageManifestFinished()
+{
+	QScopedPointer<QNetworkReply, QScopedPointerDeleteLater> reply(activeManifestReply);
+	activeManifestReply = nullptr;
+	if (!reply) return;
+	if (reply->error() != QNetworkReply::NoError) {
+		dlStatusLabel->setText("Status: Manifest error - " + reply->errorString());
+		return;
+	}
+	QByteArray data = reply->readAll();
+	QJsonParseError jerr;
+	QJsonDocument doc = QJsonDocument::fromJson(data, &jerr);
+	if (jerr.error != QJsonParseError::NoError || !doc.isArray()) {
+		dlStatusLabel->setText("Status: Invalid manifest JSON");
+		return;
+	}
+	QJsonArray arr = doc.array();
+	packagesTable->setRowCount(arr.size());
+	int row = 0;
+	for (const QJsonValue &v : arr) {
+		QJsonObject o = v.toObject();
+		auto setItem = [&](int c, const QString &text){
+			QTableWidgetItem *it = new QTableWidgetItem(text);
+			it->setFlags(it->flags() ^ Qt::ItemIsEditable);
+			packagesTable->setItem(row, c, it);
+		};
+		setItem(0, o.value("version").toString());
+		setItem(1, o.value("build").toString());
+		setItem(2, o.value("date").toString());
+		setItem(3, o.value("region").toString());
+		setItem(4, o.value("size").toString());
+		// store download url in first column data
+		if (packagesTable->item(row,0)) {
+			packagesTable->item(row,0)->setData(Qt::UserRole, o.value("url").toString());
+		}
+		row++;
+	}
+	dlStatusLabel->setText(QString("Status: %1 package(s) listed").arg(arr.size()));
+}
+
+void MainWindow::DownloadSelectedPackage(void)
+{
+	int row = packagesTable->currentRow();
+	if (row < 0) { dlStatusLabel->setText("Status: Select a package"); return; }
+	QString url = packagesTable->item(row,0)->data(Qt::UserRole).toString();
+	if (url.isEmpty()) { dlStatusLabel->setText("Status: Missing URL"); return; }
+	QNetworkRequest req{QUrl(url)};
+	req.setHeader(QNetworkRequest::UserAgentHeader, "Heimdall-Frontend");
+	if (activeDownloadReply) { activeDownloadReply->abort(); activeDownloadReply->deleteLater(); }
+	activeDownloadReply = packageNet->get(req);
+	QObject::connect(activeDownloadReply, &QNetworkReply::downloadProgress, this, &MainWindow::HandlePackageDownloadProgress);
+	QObject::connect(activeDownloadReply, &QNetworkReply::finished, this, &MainWindow::HandlePackageDownloadFinished);
+	dlStatusLabel->setText("Status: Downloading...");
+}
+
+void MainWindow::HandlePackageDownloadProgress(qint64 received, qint64 total)
+{
+	if (total > 0) dlStatusLabel->setText(QString("Status: Downloading %1% ").arg((int)(received*100/total)));
+}
+
+void MainWindow::HandlePackageDownloadFinished()
+{
+	QScopedPointer<QNetworkReply, QScopedPointerDeleteLater> reply(activeDownloadReply);
+	activeDownloadReply = nullptr;
+	if (!reply) return;
+	if (reply->error() != QNetworkReply::NoError) {
+		dlStatusLabel->setText("Status: Download error - " + reply->errorString());
+		return;
+	}
+	// Determine filename
+	QUrl url = reply->url();
+	QString base = QFileInfo(url.path()).fileName();
+	if (base.isEmpty()) base = "package.bin";
+	QString path = downloadsDir + "/" + base;
+	QFile f(path);
+	if (!f.open(QIODevice::WriteOnly)) {
+		dlStatusLabel->setText("Status: Cannot write file");
+		return;
+	}
+	f.write(reply->readAll());
+	f.close();
+	dlStatusLabel->setText("Status: Downloaded -> " + path);
+}
+
+void MainWindow::OpenPackagesFolder(void)
+{
+	QDesktopServices::openUrl(QUrl::fromLocalFile(downloadsDir));
+}
+// TEE Analysis Implementation
+
+void MainWindow::AnalyzeTEE(void)
+{
+	teeTypeLabel->setText("TEE: Analyzing...");
+	teeOutputTextEdit->clear();
+
+	// Run ADB commands synchronously to gather evidence
+	auto runAdb = [](const QStringList& args) -> QString {
+		QProcess p;
+		p.start(HeimdallFrontend::Adb::adbExecutable(), args);
+		bool ok = p.waitForFinished(8000);
+		QString out = QString::fromUtf8(p.readAllStandardOutput());
+		QString err = QString::fromUtf8(p.readAllStandardError());
+		return ok ? out : (out + "\n" + err);
+	};
+
+	QString props = runAdb(HeimdallFrontend::Adb::argsCustom("shell getprop"));
+	QString devNodes = runAdb(HeimdallFrontend::Adb::argsCustom("shell ls -la /dev"));
+	QString kernelLog = runAdb(QStringList() << "logcat" << "-b" << "kernel" << "-d");
+	QString vendorLibs64 = runAdb(HeimdallFrontend::Adb::argsCustom("shell ls /vendor/lib64"));
+	QString vendorLibs32 = runAdb(HeimdallFrontend::Adb::argsCustom("shell ls /vendor/lib"));
+
+	QStringList libs;
+	for (const auto& line : vendorLibs64.split('\n', Qt::SkipEmptyParts)) libs << line.trimmed();
+	for (const auto& line : vendorLibs32.split('\n', Qt::SkipEmptyParts)) libs << line.trimmed();
+
+	auto result = HeimdallFrontend::TEE::analyze(props, devNodes, kernelLog, libs);
+
+	teeTypeLabel->setText(QString("TEE: %1 (confidence %2%)").arg(result.typeName).arg(result.confidence));
+
+	teeOutputTextEdit->append("<b>Indicators matched:</b>");
+	for (const auto& h : result.indicators)
+		teeOutputTextEdit->append("• " + h);
+
+	teeOutputTextEdit->append("\n<b>Sample props:</b>\n" + props.left(2000));
+	teeOutputTextEdit->append("\n<b>Kernel log (filtered):</b>");
+	QString filteredKernel;
+	for (const auto& line : kernelLog.split('\n')) {
+		if (line.contains("tee", Qt::CaseInsensitive) || line.contains("qsee", Qt::CaseInsensitive) || line.contains("trust", Qt::CaseInsensitive))
+			filteredKernel += line + "\n";
+	}
+	teeOutputTextEdit->append(filteredKernel.isEmpty() ? QString("(no tee-related kernel lines found)") : filteredKernel);
 }
 
 MainWindow::~MainWindow()
@@ -959,20 +1178,38 @@ void MainWindow::StartFlash(void)
 
 	const FirmwareInfo& firmwareInfo = workingPackageData.GetFirmwareInfo();
 	const QList<FileInfo>& fileInfos = firmwareInfo.GetFileInfos();
+
+	bool singlePartitionFlash = (fileInfos.length() == 1);
 	
 	QStringList arguments;
 	arguments.append("flash");
 
-	if (firmwareInfo.GetRepartition())
+	// Only allow repartition if flashing multiple partitions
+	if (firmwareInfo.GetRepartition() && !singlePartitionFlash)
 		arguments.append("--repartition");
+	else if (firmwareInfo.GetRepartition() && singlePartitionFlash)
+	{
+		// Inform user we’re skipping repartition for single-partition flash
+		flashLabel->setText("Skipping repartition (single partition flash)");
+	}
 
-	arguments.append("--pit");
+	// Use uppercase flag for PIT as per Heimdall conventions
+	arguments.append("--PIT");
 	arguments.append(firmwareInfo.GetPitFilename());
 
 	for (int i = 0; i < fileInfos.length(); i++)
 	{
+		// Prefer partition name flags (e.g., --RECOVERY) over numeric IDs
+		const PitEntry *pe = currentPitData.FindEntry(fileInfos[i].GetPartitionId());
 		QString flag;
-		flag.sprintf("--%u", fileInfos[i].GetPartitionId());
+		if (pe && pe->IsFlashable())
+		{
+			flag = QString("--") + QString::fromLatin1(pe->GetPartitionName());
+		}
+		else
+		{
+			flag.sprintf("--%u", fileInfos[i].GetPartitionId());
+		}
 
 		arguments.append(flag);
 		arguments.append(fileInfos[i].GetFilename());
@@ -1127,6 +1364,149 @@ void MainWindow::BuildPackage(void)
 
 		Packaging::BuildPackage(packagePath, workingPackageData.GetFirmwareInfo());
 	}
+}
+
+static QString basenameLower(const QString &path)
+{
+	QString base = QFileInfo(path).fileName();
+	return base.toLower();
+}
+
+static QString stripExtensions(const QString &name)
+{
+	QString s = name;
+	int idx;
+	// Remove multiple extensions like .img.lz4 or .tar.md5
+	for (int i = 0; i < 2; ++i) {
+		idx = s.lastIndexOf('.');
+		if (idx > 0) s = s.left(idx);
+	}
+	return s;
+}
+
+void MainWindow::ConvertSamsungQuick(void)
+{
+	QString pitPath = PromptFileSelection("Select PIT", "*.pit");
+	if (pitPath.isEmpty()) return;
+
+	QFile pitFile(pitPath);
+	if (!ReadPit(&pitFile))
+	{
+		Alerts::DisplayError("Failed to read PIT file. Please select a valid PIT.");
+		return;
+	}
+
+	QStringList srcFiles = QFileDialog::getOpenFileNames(this, "Select Samsung firmware files",
+		lastDirectory, "Firmware Files (*.img *.img.lz4 *.bin *.mbn *.elf *.tar *.md5);;All Files (*)");
+
+	if (srcFiles.isEmpty()) return;
+
+	QStringList skippedArchives;
+	QList<FileInfo> mapped;
+
+	auto findPartitionIdByName = [&](const QString &cand) -> int {
+		if (cand.isEmpty()) return -1;
+		const PitEntry *e = currentPitData.FindEntry(cand.toUtf8().constData());
+		if (e) return (int)e->GetIdentifier();
+		return -1;
+	};
+
+	auto findPartitionIdByFlashFilename = [&](const QString &fileBase) -> int {
+		for (unsigned int i = 0; i < currentPitData.GetEntryCount(); i++)
+		{
+			const PitEntry *pe = currentPitData.GetEntry(i);
+			if (!pe->IsFlashable()) continue;
+			QString flash = QString::fromLatin1(pe->GetFlashFilename()).toLower();
+			if (flash.isEmpty()) continue;
+			if (flash == fileBase || flash.contains(fileBase)) return (int)pe->GetIdentifier();
+		}
+		return -1;
+	};
+
+	auto tryCandidates = [&](const QStringList &cands, const QString &fileBase) -> int {
+		for (const QString &c : cands)
+		{
+			int id = findPartitionIdByName(c);
+			if (id >= 0) return id;
+		}
+		return findPartitionIdByFlashFilename(fileBase);
+	};
+
+	for (const QString &path : srcFiles)
+	{
+		QString lower = basenameLower(path);
+		if (lower.endsWith(".tar") || lower.endsWith(".md5"))
+		{
+			skippedArchives << lower;
+			continue;
+		}
+
+		QString baseNoExt = stripExtensions(lower);
+
+		QStringList cands;
+
+		if (lower.contains("home_csc")) { cands << "CSC" << "ODM" << "OMC"; }
+		if (lower.contains("csc")) { cands << "CSC" << "ODM" << "OMC"; }
+		if (lower.contains("modem") || lower.startsWith("cp_")) { cands << "MODEM" << "CP"; }
+		if (lower.contains("bootloader") || lower.contains("sboot")) { cands << "SBOOT" << "BOOTLOADER"; }
+		if (lower.contains("boot") && !lower.contains("bootloader")) { cands << "BOOT"; }
+		if (lower.contains("recovery")) { cands << "RECOVERY"; }
+		if (lower.contains("system")) { cands << "SYSTEM"; }
+		if (lower.contains("vendor")) { cands << "VENDOR"; }
+		if (lower.contains("product")) { cands << "PRODUCT"; }
+		if (lower.contains("userdata")) { cands << "USERDATA"; }
+		if (lower.contains("cache")) { cands << "CACHE"; }
+		if (lower.contains("dtbo")) { cands << "DTBO"; }
+		if (lower.contains("vbmeta")) { cands << "VBMETA_SYSTEM" << "VBMETA_VENDOR" << "VBMETA"; }
+		if (lower.contains("param")) { cands << "PARAM"; }
+		if (lower == "cm.bin" || lower.contains("cm")) { cands << "CM"; }
+
+		// Fallback: also try uppercase of file basename as direct partition name
+		cands << stripExtensions(lower).toUpper();
+
+		int partId = tryCandidates(cands, baseNoExt);
+		if (partId >= 0)
+		{
+			mapped.append(FileInfo((unsigned int)partId, path));
+		}
+	}
+
+	if (mapped.isEmpty())
+	{
+		QString msg = "No files could be mapped. Ensure you select extracted images (not .tar/.md5).";
+		if (!skippedArchives.isEmpty()) msg += "\nSkipped archives: " + skippedArchives.join(", ");
+		Alerts::DisplayError(msg);
+		return;
+	}
+
+	FirmwareInfo fi;
+	fi.SetName("Samsung Conversion");
+	fi.SetVersion(QDateTime::currentDateTime().toString("yyyyMMdd-HHmm"));
+	fi.GetPlatformInfo().SetName("Android");
+	fi.GetPlatformInfo().SetVersion("");
+	fi.SetPitFilename(pitPath);
+	fi.SetRepartition(false);
+	fi.SetNoReboot(false);
+	for (const FileInfo &f : mapped) fi.GetFileInfos().append(f);
+
+	QString outPath = PromptFileCreation("Save Package", "Firmware Package (*.gz)");
+	if (outPath.isEmpty()) return;
+
+	if (!outPath.endsWith(".tar.gz", Qt::CaseInsensitive))
+	{
+		if (outPath.endsWith(".tar", Qt::CaseInsensitive)) outPath.append(".gz");
+		else if (outPath.endsWith(".gz", Qt::CaseInsensitive)) outPath.replace(outPath.length() - 3, 3, ".tar.gz");
+		else if (outPath.endsWith(".tgz", Qt::CaseInsensitive)) outPath.replace(outPath.length() - 4, 4, ".tar.gz");
+		else outPath.append(".tar.gz");
+	}
+
+	if (!Packaging::BuildPackage(outPath, fi))
+	{
+		Alerts::DisplayError("Failed to build Heimdall package.");
+		return;
+	}
+
+	Alerts::DisplayWarning(QString("Package created:\n%1").arg(outPath));
 }
 
 void MainWindow::DetectDevice(void)
@@ -1363,7 +1743,7 @@ void MainWindow::HandleHeimdallError(QProcess::ProcessError error)
 		}
 		else
 		{
-			utilityOutputPlainTextEdit->setPlainText("\nFRONTEND ERROR: Failed to start Heimdall!");
+			utilityOutputPlainTextEdit->setPlainText("\nFRONTEND ERROR: Failed to start Heimdall!\n" + QString::fromUtf8(heimdallProcess.readAllStandardError()));
 		}
 
 		heimdallFailed = true;
@@ -1379,7 +1759,7 @@ void MainWindow::HandleHeimdallError(QProcess::ProcessError error)
 		}
 		else
 		{
-			utilityOutputPlainTextEdit->appendPlainText("\nFRONTEND ERROR: Heimdall crashed!");
+			utilityOutputPlainTextEdit->appendPlainText("\nFRONTEND ERROR: Heimdall crashed!\n" + QString::fromUtf8(heimdallProcess.readAllStandardError()));
 		}
 		
 		heimdallState = HeimdallState::Stopped;
@@ -1394,7 +1774,7 @@ void MainWindow::HandleHeimdallError(QProcess::ProcessError error)
 		}
 		else
 		{
-			utilityOutputPlainTextEdit->appendPlainText("\nFRONTEND ERROR: Heimdall reported an unknown error!");
+			utilityOutputPlainTextEdit->appendPlainText("\nFRONTEND ERROR: Heimdall reported an unknown error!\n" + QString::fromUtf8(heimdallProcess.readAllStandardError()));
 		}
 		
 		heimdallState = HeimdallState::Stopped;
@@ -1407,45 +1787,41 @@ void MainWindow::HandleHeimdallError(QProcess::ProcessError error)
 void MainWindow::RebootToRecovery(void)
 {
 	adbStatusLabel->setText("ADB Status: Rebooting to recovery...");
-	adbOutputTextEdit->append("Executing: adb reboot recovery");
-	
-	QStringList arguments;
-	arguments << "reboot" << "recovery";
-	
-	adbProcess.start("adb", arguments);
+	adbOutputTextEdit->append("Executing: " + HeimdallFrontend::Adb::adbExecutable() + " reboot recovery");
+    
+	QStringList arguments = HeimdallFrontend::Adb::argsRebootRecovery();
+    
+	adbProcess.start(HeimdallFrontend::Adb::adbExecutable(), arguments);
 }
 
 void MainWindow::RebootToDownload(void)
 {
 	adbStatusLabel->setText("ADB Status: Rebooting to download mode...");
-	adbOutputTextEdit->append("Executing: adb reboot download");
-	
-	QStringList arguments;
-	arguments << "reboot" << "download";
-	
-	adbProcess.start("adb", arguments);
+	adbOutputTextEdit->append("Executing: " + HeimdallFrontend::Adb::adbExecutable() + " reboot download");
+    
+	QStringList arguments = HeimdallFrontend::Adb::argsRebootDownload();
+    
+	adbProcess.start(HeimdallFrontend::Adb::adbExecutable(), arguments);
 }
 
 void MainWindow::RebootToFastboot(void)
 {
 	adbStatusLabel->setText("ADB Status: Rebooting to fastboot...");
-	adbOutputTextEdit->append("Executing: adb reboot bootloader");
-	
-	QStringList arguments;
-	arguments << "reboot" << "bootloader";
-	
-	adbProcess.start("adb", arguments);
+	adbOutputTextEdit->append("Executing: " + HeimdallFrontend::Adb::adbExecutable() + " reboot bootloader");
+    
+	QStringList arguments = HeimdallFrontend::Adb::argsRebootFastboot();
+    
+	adbProcess.start(HeimdallFrontend::Adb::adbExecutable(), arguments);
 }
 
 void MainWindow::ShutdownDevice(void)
 {
 	adbStatusLabel->setText("ADB Status: Shutting down device...");
-	adbOutputTextEdit->append("Executing: adb shell reboot -p");
-	
-	QStringList arguments;
-	arguments << "shell" << "reboot" << "-p";
-	
-	adbProcess.start("adb", arguments);
+	adbOutputTextEdit->append("Executing: " + HeimdallFrontend::Adb::adbExecutable() + " shell reboot -p");
+    
+	QStringList arguments = HeimdallFrontend::Adb::argsShutdown();
+    
+	adbProcess.start(HeimdallFrontend::Adb::adbExecutable(), arguments);
 }
 
 void MainWindow::ExecuteCustomAdbCommand(void)
@@ -1455,22 +1831,21 @@ void MainWindow::ExecuteCustomAdbCommand(void)
 		return;
 		
 	adbStatusLabel->setText("ADB Status: Executing custom command...");
-	adbOutputTextEdit->append("Executing: adb " + command);
-	
-	QStringList arguments = command.split(' ', Qt::SkipEmptyParts);
-	
-	adbProcess.start("adb", arguments);
+	adbOutputTextEdit->append("Executing: " + HeimdallFrontend::Adb::adbExecutable() + " " + command);
+    
+	QStringList arguments = HeimdallFrontend::Adb::argsCustom(command);
+    
+	adbProcess.start(HeimdallFrontend::Adb::adbExecutable(), arguments);
 }
 
 void MainWindow::RefreshDeviceInfo(void)
 {
 	adbStatusLabel->setText("ADB Status: Getting device information...");
 	deviceInfoTextEdit->append("=== Device Information ===");
-	
-	QStringList arguments;
-	arguments << "shell" << "getprop";
-	
-	adbProcess.start("adb", arguments);
+    
+	QStringList arguments = HeimdallFrontend::Adb::argsCustom("shell getprop");
+    
+	adbProcess.start(HeimdallFrontend::Adb::adbExecutable(), arguments);
 }
 
 void MainWindow::UpdateAdbInterface(void)
@@ -1481,37 +1856,45 @@ void MainWindow::UpdateAdbInterface(void)
 void MainWindow::ListAdbDevices(void)
 {
 	adbStatusLabel->setText("ADB Status: Listing connected devices...");
-	adbOutputTextEdit->append("=== ADB Devices ===");
-	adbOutputTextEdit->append("Executing: adb devices -l");
-	
-	QStringList arguments;
-	arguments << "devices" << "-l";
-	
-	adbProcess.start("adb", arguments);
+	adbOutputTextEdit->append("<br><font color='#4A90E2'>=== 📱 ADB DEVICES ===</font>");
+	adbOutputTextEdit->append("<font color='#4A90E2'>Executing: " + HeimdallFrontend::Adb::adbExecutable() + " devices -l</font>");
+    
+	QStringList arguments = HeimdallFrontend::Adb::argsDevices();
+    
+	adbProcess.start(HeimdallFrontend::Adb::adbExecutable(), arguments);
 }
 
 void MainWindow::AdbShellLs(void)
 {
 	adbStatusLabel->setText("ADB Status: Listing root directory...");
-	adbOutputTextEdit->append("=== Shell ls -la / ===");
-	adbOutputTextEdit->append("Executing: adb shell ls -la /");
-	
-	QStringList arguments;
-	arguments << "shell" << "ls" << "-la" << "/";
-	
-	adbProcess.start("adb", arguments);
+	adbOutputTextEdit->append("<br><font color='#4A90E2'>=== 📁 SHELL LS -LA / ===</font>");
+	adbOutputTextEdit->append("<font color='#4A90E2'>Executing: " + HeimdallFrontend::Adb::adbExecutable() + " shell ls -la /</font>");
+    
+	QStringList arguments = HeimdallFrontend::Adb::argsShellLsRoot();
+    
+	adbProcess.start(HeimdallFrontend::Adb::adbExecutable(), arguments);
 }
 
 void MainWindow::AdbLogcat(void)
 {
 	adbStatusLabel->setText("ADB Status: Getting recent logs...");
-	adbOutputTextEdit->append("=== Recent Logcat ===");
-	adbOutputTextEdit->append("Executing: adb logcat -d -t 50");
-	
-	QStringList arguments;
-	arguments << "logcat" << "-d" << "-t" << "50";
-	
-	adbProcess.start("adb", arguments);
+	adbOutputTextEdit->append("<br><font color='#4A90E2'>=== 📝 RECENT LOGCAT ===</font>");
+	adbOutputTextEdit->append("<font color='#4A90E2'>Executing: " + HeimdallFrontend::Adb::adbExecutable() + " logcat -d -t 50</font>");
+    
+	QStringList arguments = HeimdallFrontend::Adb::argsLogcatRecent(50);
+    
+	adbProcess.start(HeimdallFrontend::Adb::adbExecutable(), arguments);
+}
+
+void MainWindow::CheckRoot(void)
+{
+	adbStatusLabel->setText("ADB Status: Checking root access...");
+	adbOutputTextEdit->append("<br><font color='#4A90E2'>=== 🔐 CHECKING ROOT ACCESS ===</font>");
+	adbOutputTextEdit->append("<font color='#4A90E2'>Executing: " + HeimdallFrontend::Adb::adbExecutable() + " shell which su</font>");
+    
+	QStringList arguments = HeimdallFrontend::Adb::argsCheckRoot();
+    
+	adbProcess.start(HeimdallFrontend::Adb::adbExecutable(), arguments);
 }
 
 void MainWindow::InstallApk(void)
@@ -1522,18 +1905,18 @@ void MainWindow::InstallApk(void)
 		return;
 		
 	adbStatusLabel->setText("ADB Status: Installing APK...");
-	adbOutputTextEdit->append("=== Installing APK ===");
-	adbOutputTextEdit->append("Executing: adb install " + apkPath);
-	
-	QStringList arguments;
-	arguments << "install" << apkPath;
-	
-	adbProcess.start("adb", arguments);
+	adbOutputTextEdit->append("<br><font color='#4A90E2'>=== 📦 INSTALLING APK ===</font>");
+	adbOutputTextEdit->append("<font color='#4A90E2'>Executing: " + HeimdallFrontend::Adb::adbExecutable() + " install " + apkPath + "</font>");
+    
+	QStringList arguments = HeimdallFrontend::Adb::argsInstallApk(apkPath);
+    
+	adbProcess.start(HeimdallFrontend::Adb::adbExecutable(), arguments);
 }
 
 void MainWindow::ClearAdbOutput(void)
 {
 	adbOutputTextEdit->clear();
+	adbOutputTextEdit->append("<font color='#4A90E2'>ADB output cleared - ready for new commands ✨</font>");
 	adbStatusLabel->setText("ADB Status: Output cleared");
 }
 
@@ -1552,10 +1935,45 @@ void MainWindow::HandleAdbStdout(void)
 	}
 	else
 	{
-		// Add timestamp for better readability
+		// Add timestamp and color for better readability
 		if (!output.trimmed().isEmpty())
 		{
-			adbOutputTextEdit->append(output.trimmed());
+			QString coloredOutput = output.trimmed();
+			
+			// Check for root detection specifically
+			if (adbProcess.arguments().contains("which") && adbProcess.arguments().contains("su"))
+			{
+				if (coloredOutput.contains("/system/bin/su") || coloredOutput.contains("/su"))
+				{
+					coloredOutput = "<font color='#4CAF50'>✅ ROOT ACCESS DETECTED: " + coloredOutput + "</font>";
+				}
+				else if (coloredOutput.isEmpty())
+				{
+					coloredOutput = "<font color='#FF5722'>❌ NO ROOT ACCESS - 'su' command not found</font>";
+				}
+			}
+			// Color success messages
+			else if (coloredOutput.contains("Success") || coloredOutput.contains("successfully"))
+			{
+				coloredOutput = "<font color='#4CAF50'>" + coloredOutput + "</font>";
+			}
+			// Color error messages
+			else if (coloredOutput.contains("error") || coloredOutput.contains("failed") || coloredOutput.contains("Error"))
+			{
+				coloredOutput = "<font color='#FF5722'>" + coloredOutput + "</font>";
+			}
+			// Color device information
+			else if (coloredOutput.contains("device") && coloredOutput.contains("\t"))
+			{
+				coloredOutput = "<font color='#4CAF50'>" + coloredOutput + "</font>";
+			}
+			// Default output in light gray
+			else
+			{
+				coloredOutput = "<font color='#B0BEC5'>" + coloredOutput + "</font>";
+			}
+			
+			adbOutputTextEdit->append(coloredOutput);
 		}
 	}
 }
@@ -1994,14 +2412,10 @@ void MainWindow::adaptWidgetsToSize(const QSize &size)
 				statusGroup->move(10, availableHeight - 180);
 			}
 		}
-		// Load Package Tab responsive adjustments  
+		// Load Package Tab is fully layout-managed; avoid manual move/resize
 		else if (currentTab->objectName() == "loadPackageTab")
 		{
-			if (auto includedFilesGroup = currentTab->findChild<QGroupBox*>("includedFilesGroup"))
-			{
-				includedFilesGroup->resize(availableWidth * 0.35, availableHeight - 20);
-				includedFilesGroup->move(availableWidth * 0.6, 10);
-			}
+			// No manual geometry changes here; layouts handle responsiveness
 		}
 		// Create Package Tab responsive adjustments
 		else if (currentTab->objectName() == "createPackageTab")  

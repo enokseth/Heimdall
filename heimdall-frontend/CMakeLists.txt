@@ -9,6 +9,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON) # moc files are generated in build (current) directory
 
 find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Network REQUIRED)
 find_package(ZLIB REQUIRED)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
@@ -18,6 +19,7 @@ if(MINGW)
 endif(MINGW)
 
 include_directories(${LIBPIT_INCLUDE_DIRS})
+include_directories(../heimdall/source)
 
 set(HEIMDALL_FRONTEND_SOURCE_FILES
     source/aboutform.cpp
@@ -26,7 +28,9 @@ set(HEIMDALL_FRONTEND_SOURCE_FILES
     source/main.cpp
     source/mainwindow.cpp
     source/PackageData.cpp
-    source/Packaging.cpp)
+    source/Packaging.cpp
+    ../heimdall/source/AdbCommands.cpp
+    ../heimdall/source/TEEAnalyzer.cpp)
 
 qt5_wrap_ui(HEIMDALL_FRONTEND_FORMS
     mainwindow.ui
@@ -49,6 +53,7 @@ set_property(TARGET heimdall-frontend
 
 target_link_libraries(heimdall-frontend pit)
 target_link_libraries(heimdall-frontend Qt5::Widgets)
+target_link_libraries(heimdall-frontend Qt5::Network)
 target_link_libraries(heimdall-frontend z)
 install (TARGETS heimdall-frontend
 		RUNTIME	DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
